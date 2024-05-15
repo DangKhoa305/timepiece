@@ -23,4 +23,9 @@ public class TestController {
     public String getTest3(){
         return "test git";
     }
+
+    @GetMapping("/getTest4")
+    public String getTest4(){
+        return "test git lan nua";
+    }
 }

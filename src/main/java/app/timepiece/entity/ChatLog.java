@@ -2,22 +2,21 @@ package app.timepiece.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "ChatLogg")
-public class ChatLogg {
+public class ChatLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "watchId", nullable = false)
+    @JoinColumn(name = "watch_id", nullable = false)
     private Watch watch;
 
     @Column(nullable = false)

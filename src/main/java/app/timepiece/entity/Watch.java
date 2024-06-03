@@ -9,10 +9,10 @@ public class Watch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long watchId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false)
@@ -28,7 +28,7 @@ public class Watch {
     private double price;
 
     @ManyToOne
-    @JoinColumn(name = "brandId", nullable = false)
+    @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
     @Column(nullable = false)

@@ -5,24 +5,18 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Feedback")
 public class Feedback {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long feedbackId;
+    private Long id;
+
+    private String description;
+    private int rating;
+    private String timestamp;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private int rating;
-
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
-
+    // Getters and setters
 }

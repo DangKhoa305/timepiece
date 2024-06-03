@@ -9,10 +9,10 @@ public class WatchImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long imageId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "watchId", nullable = false)
+    @JoinColumn(name = "watch_id", nullable = false)
     private Watch watch;
 
     @Column(nullable = false)

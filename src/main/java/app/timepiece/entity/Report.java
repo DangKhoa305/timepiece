@@ -9,30 +9,24 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reportId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "watchId", nullable = false)
+    @JoinColumn(name = "watch_id", nullable = false)
     private Watch watch;
 
     @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
-    private double minValue;
-
-    @Column(nullable = false)
-    private double maxValue;
+    private String commentValue;
 
     @Column(nullable = false)
     private String authenticityVerification;
-
-    @Column(nullable = false)
-    private String estimation;
 
     @Column(nullable = false)
     private String reportStatus;

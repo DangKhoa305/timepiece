@@ -1,19 +1,19 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
-import java.util.Objects;
+import java.util.Set;
 
 @Entity
-public class Account {
+public class Type {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
-    private String password;
+    @Column(nullable = false, unique = true)
+    private String typeName;
 
-    @OneToOne(mappedBy = "account")
-    private User user;
+    @OneToMany(mappedBy = "type")
+    private Set<Watch> watches;
 
     // Getters and setters
 }

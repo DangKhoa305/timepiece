@@ -3,6 +3,7 @@ package app.timepiece.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "AppraisalRequest")
 public class AppraisalRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

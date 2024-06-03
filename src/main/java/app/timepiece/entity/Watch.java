@@ -34,6 +34,7 @@ public class Watch {
     @Column(nullable = false)
     private int yearProduced;
 
-    @Column(nullable = false)
-    private String watchType;
+    @ManyToOne
+    @JoinColumn(name = "watch_type_id", nullable = false)
+    private WatchType watchType;
 }

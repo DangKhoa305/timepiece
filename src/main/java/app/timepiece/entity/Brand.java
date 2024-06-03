@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "Brand")
+@Table(name = "WatchBrand")
 public class Brand {
 
     @Id

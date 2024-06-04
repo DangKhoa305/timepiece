@@ -34,6 +34,24 @@ public class Watch {
     @Column(nullable = false)
     private int yearProduced;
 
+    @Column(nullable = false)
+    private String model;
+
+    @Column(nullable = false)
+    private String material;
+
+    @Column(nullable = false)
+    private String watchStrap;
+
+    @Column(nullable = false)
+    private String size;
+
+    @Column(nullable = true)
+    private String accessories;
+
+    @Column(nullable = false)
+    private String referenceCode;
+
     @ManyToOne
     @JoinColumn(name = "watch_type_id", nullable = false)
     private WatchType watchType;

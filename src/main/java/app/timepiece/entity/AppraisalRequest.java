@@ -24,7 +24,9 @@ public class AppraisalRequest {
     @Column(nullable = false)
     private String referenceCode ;
 
-
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User users;
 
     // Getters and setters
 }

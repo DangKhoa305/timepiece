@@ -12,14 +12,19 @@ public class AppraisalRequest {
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;
+
+    @Column(nullable = false)
     private double desiredPrice;
 
-    @Column(length = 1000)
-    private String imagePaths;
+    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "watch_id")
-    private Watch watch;
+    @Column(nullable = false)
+    private String brand;
+
+    @Column(nullable = false)
+    private String referenceCode ;
+
+
 
     // Getters and setters
 }

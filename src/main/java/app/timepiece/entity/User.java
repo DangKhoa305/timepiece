@@ -34,5 +34,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Report> reports;
 
+    @OneToMany(mappedBy = "user")
+    private Set<AppraisalRequest> appraisalRequests;
+
     // Getters and setters
 }

@@ -1,5 +1,6 @@
 package app.timepiece.dto;
 
+import java.util.List;
 public class WatchDTO {
 
     private Long id;
@@ -16,6 +17,7 @@ public class WatchDTO {
     private String accessories;
     private String referenceCode;
     private String watchTypeName;
+    private List<String> imageUrls;
 
     // Getters and Setters
     public Long getId() {
@@ -128,5 +130,13 @@ public class WatchDTO {
 
     public void setWatchTypeName(String watchTypeName) {
         this.watchTypeName = watchTypeName;
+    }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 }

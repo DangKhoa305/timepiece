@@ -8,6 +8,8 @@ import app.timepiece.repository.WatchImageRepository;
 import app.timepiece.repository.WatchRepository;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +32,12 @@ public class WatchServiceImpl implements WatchService {
     @Override
     public List<ShowWatchDTO> getTop12Watches() {
         List<Watch> watches = watchRepository.findAll().stream().limit(12).collect(Collectors.toList());
+        return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShowWatchDTO> searchWatchesByName(String name) {
+        List<Watch> watches = watchRepository.findByNameContainingIgnoreCase(name);
         return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
     }
 

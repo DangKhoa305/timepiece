@@ -1,9 +1,13 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
-import java.util.Objects;
+import lombok.*;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "WatchImage")
 public class WatchImage {
 

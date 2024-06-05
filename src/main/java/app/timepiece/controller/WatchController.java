@@ -1,5 +1,6 @@
 package app.timepiece.controller;
 
+import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.dto.WatchDTO;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,10 @@ public class WatchController {
     @GetMapping("/getAll")
     public List<WatchDTO> getAllWatches() {
         return watchService.getAllWatches();
+    }
+
+    @GetMapping("/top12")
+    public List<ShowWatchDTO> getTop12Watches() {
+        return watchService.getTop12Watches();
     }
 }

@@ -1,10 +1,15 @@
 package app.timepiece.entity;
 
+import app.timepiece.dto.WatchDTO;
 import jakarta.persistence.*;
-import java.util.Objects;
+import lombok.*;
 
 @Entity
 @Table(name = "Watch")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Watch {
 
     @Id

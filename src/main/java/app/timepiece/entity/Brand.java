@@ -1,9 +1,14 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "WatchBrand")
 public class Brand {
 
@@ -19,4 +24,5 @@ public class Brand {
 
     @OneToMany(mappedBy = "brand")
     private Set<Watch> watches;
+
 }

@@ -19,4 +19,36 @@ public class Brand {
 
     @OneToMany(mappedBy = "brand")
     private Set<Watch> watches;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Set<Watch> getWatches() {
+        return watches;
+    }
+
+    public void setWatches(Set<Watch> watches) {
+        this.watches = watches;
+    }
 }

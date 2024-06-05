@@ -1,76 +1,29 @@
-package app.timepiece.entity;
+package app.timepiece.dto;
 
-import app.timepiece.dto.WatchDTO;
-import jakarta.persistence.*;
-import java.util.Objects;
+public class WatchDTO {
 
-@Entity
-@Table(name = "Watch")
-public class Watch {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
     private String status;
-
-    @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
     private double price;
-
-    @ManyToOne
-    @JoinColumn(name = "brand_id", nullable = false)
-    private Brand brand;
-
-    @Column(nullable = false)
+    private String brandName;
     private int yearProduced;
-
-    @Column(nullable = false)
     private String model;
-
-    @Column(nullable = false)
     private String material;
-
-    @Column(nullable = false)
     private String watchStrap;
-
-    @Column(nullable = false)
     private String size;
-
-    @Column(nullable = true)
     private String accessories;
-
-    @Column(nullable = false)
     private String referenceCode;
+    private String watchTypeName;
 
-    @ManyToOne
-    @JoinColumn(name = "watch_type_id", nullable = false)
-    private WatchType watchType;
-
+    // Getters and Setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getName() {
@@ -105,12 +58,12 @@ public class Watch {
         this.price = price;
     }
 
-    public Brand getBrand() {
-        return brand;
+    public String getBrandName() {
+        return brandName;
     }
 
-    public void setBrand(Brand brand) {
-        this.brand = brand;
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 
     public int getYearProduced() {
@@ -169,11 +122,11 @@ public class Watch {
         this.referenceCode = referenceCode;
     }
 
-    public WatchType getWatchType() {
-        return watchType;
+    public String getWatchTypeName() {
+        return watchTypeName;
     }
 
-    public void setWatchType(WatchType watchType) {
-        this.watchType = watchType;
+    public void setWatchTypeName(String watchTypeName) {
+        this.watchTypeName = watchTypeName;
     }
 }

@@ -1,7 +1,6 @@
 package app.timepiece.controller;
 
-
-import app.timepiece.entity.Watch;
+import app.timepiece.dto.WatchDTO;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +16,8 @@ public class WatchController {
     @Autowired
     private WatchService watchService;
 
-    @GetMapping("/getWatch")
-    public List<Watch> getAllWatches() {
+    @GetMapping("/getAll")
+    public List<WatchDTO> getAllWatches() {
         return watchService.getAllWatches();
     }
 }

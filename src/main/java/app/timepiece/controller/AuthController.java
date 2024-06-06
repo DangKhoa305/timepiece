@@ -4,6 +4,7 @@ import app.timepiece.dto.ErrorResponse;
 import app.timepiece.dto.JwtAuthenticationResponse;
 import app.timepiece.dto.LoginRequestDTO;
 import app.timepiece.security.JwtAuthenticationFilter;
+import app.timepiece.security.JwtTokenProvider;
 import app.timepiece.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private JwtAuthenticationFilter jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private AccountService accountService;

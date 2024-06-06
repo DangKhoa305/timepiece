@@ -11,17 +11,17 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private JwtSecret jwtSecret;
 
-    public String generateToken(String username) {
+
+    public String generateToken(String email) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtSecret.JWT_EXPIRATION);
+        Date expiryDate = new Date(now.getTime() + JwtSecret.JWT_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(jwtSecret.key, SignatureAlgorithm.HS512)
+                .signWith(JwtSecret.key, SignatureAlgorithm.HS512)
                 .compact();
     }
 }

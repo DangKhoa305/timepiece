@@ -20,7 +20,6 @@ import java.util.ArrayList;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private JwtSecret jwtSecret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -28,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (jwtToken != null && validateToken(jwtToken)) {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(jwtSecret.key)
+                    .setSigningKey(JwtSecret.key)
                     .build()
                     .parseClaimsJws(jwtToken)
                     .getBody();
@@ -54,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(jwtSecret.key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(JwtSecret.key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;

@@ -3,7 +3,6 @@ package app.timepiece.controller;
 import app.timepiece.dto.ErrorResponse;
 import app.timepiece.dto.JwtAuthenticationResponse;
 import app.timepiece.dto.LoginRequestDTO;
-import app.timepiece.security.JwtAuthenticationFilter;
 import app.timepiece.security.JwtTokenProvider;
 import app.timepiece.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;

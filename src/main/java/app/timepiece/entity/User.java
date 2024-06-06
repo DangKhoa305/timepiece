@@ -1,8 +1,14 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "User")
 public class User {
@@ -16,6 +22,8 @@ public class User {
     private String phoneNumber;
     private String status;
     private String dateCreate;
+    private String gender;
+    private String birthday;
 
     @OneToOne
     @JoinColumn(name = "account_id")

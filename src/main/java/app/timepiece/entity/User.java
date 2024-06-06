@@ -22,6 +22,8 @@ public class User {
     private String phoneNumber;
     private String status;
     private String dateCreate;
+    private String gender;
+    private String birthday;
 
     @OneToOne
     @JoinColumn(name = "account_id")

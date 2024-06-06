@@ -2,7 +2,7 @@ package app.timepiece.config;
 
 
 import app.timepiece.security.JwtAuthenticationFilter;
-import app.timepiece.service.ServiceImpl.CustomUserDetailsService;
+import app.timepiece.service.serviceImpl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

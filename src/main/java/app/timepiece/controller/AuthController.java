@@ -3,7 +3,7 @@ package app.timepiece.controller;
 import app.timepiece.dto.ErrorResponse;
 import app.timepiece.dto.JwtAuthenticationResponse;
 import app.timepiece.dto.LoginRequestDTO;
-import app.timepiece.security.JwtTokenProvider;
+import app.timepiece.security.JwtAuthenticationFilter;
 import app.timepiece.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtAuthenticationFilter jwtTokenProvider;
 
     @Autowired
     private AccountService accountService;

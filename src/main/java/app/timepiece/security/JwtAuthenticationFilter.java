@@ -20,8 +20,7 @@ import java.util.ArrayList;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String JWT_SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437"; // replace with your actual secret key
-    private final Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
+  private JwtSecret jwtSecret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -29,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (jwtToken != null && validateToken(jwtToken)) {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(jwtSecret.key)
                     .build()
                     .parseClaimsJws(jwtToken)
                     .getBody();
@@ -55,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(jwtSecret.key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;

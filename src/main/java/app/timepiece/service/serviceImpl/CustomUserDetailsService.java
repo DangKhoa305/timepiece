@@ -1,4 +1,4 @@
-package app.timepiece.service.serviceImpl;
+package app.timepiece.service.ServiceImpl;
 
 import app.timepiece.entity.Account;
 import app.timepiece.repository.AccountRepository;

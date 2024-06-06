@@ -1,9 +1,14 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "WatchType")
 public class WatchType {
     @Id
@@ -16,5 +21,4 @@ public class WatchType {
     @OneToMany(mappedBy = "watchType")
     private Set<Watch> watches;
 
-    // Getters and setters
 }

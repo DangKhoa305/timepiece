@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ public class WatchController {
     @Autowired
     private WatchService watchService;
 
+   // @PreAuthorize("hasRole('Admin')")
     @GetMapping("/getAll")
     public List<WatchDTO> getAllWatches() {
         return watchService.getAllWatches();
@@ -35,4 +37,6 @@ public class WatchController {
     public List<ShowWatchDTO> searchWatchesByName(@RequestParam String name) {
         return watchService.searchWatchesByName(name);
     }
+
+
 }

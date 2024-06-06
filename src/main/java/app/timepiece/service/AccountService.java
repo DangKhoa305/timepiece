@@ -2,9 +2,11 @@ package app.timepiece.service;
 
 import app.timepiece.entity.Account;
 
+import java.util.Optional;
+
 
 public interface AccountService {
         Account saveAccount(Account account);
-        Account findByEmail(String email);
+        Optional<Account> findByEmail(String email);
 }
 

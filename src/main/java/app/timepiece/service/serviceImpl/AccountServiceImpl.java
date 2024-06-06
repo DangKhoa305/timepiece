@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -20,7 +22,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account findByEmail(String email) {
+    public Optional<Account> findByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
+
 }

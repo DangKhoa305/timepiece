@@ -15,15 +15,14 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Override
-    public Account saveAccount(Account account) {
-        account.setPassword(new BCryptPasswordEncoder().encode(account.getPassword()));
-        return accountRepository.save(account);
-    }
-
-    @Override
-    public Optional<Account> findByEmail(String email) {
-        return accountRepository.findByEmail(email);
-    }
-
+//    @Override
+//    public Account saveAccount(Account account) {
+//        account.setPassword(new BCryptPasswordEncoder().encode(account.getPassword()));
+//        return accountRepository.save(account);
+//    }
+//
+//    @Override
+//    public Optional<Account> findByEmail(String email) {
+//        return accountRepository.findByEmail(email);
+//    }
 }

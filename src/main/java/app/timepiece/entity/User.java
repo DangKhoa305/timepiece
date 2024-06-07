@@ -3,6 +3,7 @@ package app.timepiece.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -21,7 +22,7 @@ public class User {
     private String avatar;
     private String phoneNumber;
     private String status;
-    private String dateCreate;
+    private Date dateCreate;
     private String gender;
     private String birthday;
 

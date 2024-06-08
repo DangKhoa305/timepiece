@@ -83,10 +83,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
 
     private AppraisalRequestListDTO convertToDTO(AppraisalRequest appraisalRequest) {
-        String title = "Yêu cầu thẩm định đồng hồ ngày " + DATE_FORMAT.format(appraisalRequest.getCreateDate());
         return new AppraisalRequestListDTO(
                 appraisalRequest.getId(),
-                title,
+                appraisalRequest.getCreateDate(),
                 appraisalRequest.getBrand(),
                 appraisalRequest.getUpdateDate()
         );

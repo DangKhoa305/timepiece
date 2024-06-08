@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class AppraisalRequestListDTO {
     private Long id;
-    private String title;
+    private Date createDate;
     private String brand;
     private Date updateDate;
 }

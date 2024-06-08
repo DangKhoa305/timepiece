@@ -1,6 +1,7 @@
 package app.timepiece.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,13 +18,13 @@ public class AppraisalRequestDTO {
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;
-    private boolean Arethereanystickers;
+    private boolean arethereanystickers;
     private int age;
     private double desiredPrice;
     private String description;
     private String brand;
     private String referenceCode;
-    private List<String> imageUrls;
+    private List<MultipartFile> imageFiles;
 
 
 }

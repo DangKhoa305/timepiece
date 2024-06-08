@@ -1,28 +1,34 @@
 package app.timepiece.service.serviceImpl;
 
+import app.timepiece.dto.AppraisalRequestResponseDTO;
+import app.timepiece.entity.Account;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.entity.AppraisalRequest;
 import app.timepiece.entity.RequestImage;
 import app.timepiece.repository.*;
 import app.timepiece.service.AppraisalRequestService;
 import app.timepiece.dto.AppraisalRequestDTO;
-import app.timepiece.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private AppraisalRequestRepository appraisalRequestRepository;
@@ -30,17 +36,23 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     @Autowired
     private RequestImageRepository requestImageRepository;
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
-    public void createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO) {
-        User user = new User();
-        user.setName(appraisalRequestDTO.getName());
-        user.setPhoneNumber(appraisalRequestDTO.getPhoneNumber());
-        User savedUser = userRepository.save(user);
+    public Boolean createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO)  {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(appraisalRequestDTO.getEmail());
+
+        if (optionalAccount.isEmpty()) {
+            // Nếu người dùng không tồn tại
+            String errorMessage = "User not found with email: " + appraisalRequestDTO.getEmail();
+            throw new Error( errorMessage);
+        }
+        // Lấy người dùng từ Optional<Account>
+        Account account = optionalAccount.get();
 
         AppraisalRequest appraisalRequest = new AppraisalRequest();
-        appraisalRequest.setUsers(savedUser);
+        appraisalRequest.setUsers(account.getUser());
         appraisalRequest.setHasOriginalBox(appraisalRequestDTO.isHasOriginalBox());
         appraisalRequest.setHasPapersOrWarranty(appraisalRequestDTO.isHasPapersOrWarranty());
         appraisalRequest.setHasPurchaseReceipt(appraisalRequestDTO.isHasPurchaseReceipt());
@@ -52,14 +64,51 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setReferenceCode(appraisalRequestDTO.getReferenceCode());
         appraisalRequest.setStatus("wait");
         appraisalRequest.setCreateDate(new Date());
+        appraisalRequest.setUpdateDate(new Date());
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
 
-        for (String imageUrl : appraisalRequestDTO.getImageUrls()) {
-            RequestImage requestImage = new RequestImage();
-            requestImage.setAppraisalRequest(savedAppraisalRequest);
-            requestImage.setImageUrl(imageUrl);
-            requestImageRepository.save(requestImage);
+        for (MultipartFile imageFile : appraisalRequestDTO.getImageFiles()) {
+            try {
+                Map uploadResult = cloudinaryService.uploadFile(imageFile);
+                String uploadedImageUrl = uploadResult.get("url").toString();
+                RequestImage requestImage = new RequestImage();
+                requestImage.setAppraisalRequest(savedAppraisalRequest);
+                requestImage.setImageUrl(uploadedImageUrl);
+                requestImageRepository.save(requestImage);
+            } catch (Exception e) {
+                throw new Error(e) ;
+            }
         }
+        return true;
+    }
+
+    @Override
+    public AppraisalRequestResponseDTO getAppraisalRequestById(Long id) {
+        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found with id: " + id));
+
+        List<RequestImage> images = requestImageRepository.findByAppraisalRequestId(id);
+
+        List<String> imageUrls = images.stream()
+                .map(RequestImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        // Create and return the DTO
+        return AppraisalRequestResponseDTO.builder()
+                .name(appraisalRequest.getUsers().getName())
+                .email(appraisalRequest.getUsers().getAccount().getEmail())
+                .phoneNumber(appraisalRequest.getUsers().getPhoneNumber())
+                .hasOriginalBox(appraisalRequest.isHasOriginalBox())
+                .hasPapersOrWarranty(appraisalRequest.isHasPapersOrWarranty())
+                .hasPurchaseReceipt(appraisalRequest.isHasPurchaseReceipt())
+                .arethereanystickers(appraisalRequest.isArethereanystickers())
+                .age(appraisalRequest.getAge())
+                .desiredPrice(appraisalRequest.getDesiredPrice())
+                .description(appraisalRequest.getDescription())
+                .brand(appraisalRequest.getBrand())
+                .referenceCode(appraisalRequest.getReferenceCode())
+                .imageUrls(imageUrls)
+                .build();
     }
 
     @Override

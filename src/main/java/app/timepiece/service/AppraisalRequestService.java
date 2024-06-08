@@ -1,8 +1,9 @@
 package app.timepiece.service;
 
 import app.timepiece.dto.AppraisalRequestDTO;
+import org.springframework.http.ResponseEntity;
 
 public interface AppraisalRequestService {
-    void createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO);
-
+    ResponseEntity<String> createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO);
+    AppraisalRequestDTO getAppraisalRequestById(Long id);
 }

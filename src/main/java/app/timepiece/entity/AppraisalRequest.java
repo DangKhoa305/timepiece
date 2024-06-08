@@ -26,6 +26,7 @@ public class AppraisalRequest {
     private int age;
     private String status;
     private Date createDate;
+    private Date updateDate;
 
     @Column(nullable = false)
     private double desiredPrice;

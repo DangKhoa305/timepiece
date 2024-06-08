@@ -63,31 +63,14 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     }
 
     @Override
-    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusWait(Pageable pageable) {
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByStatus("Wait",pageable);
+    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatus(String status, Pageable pageable) {
+        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByStatus(status,pageable);
         List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
     }
 
-    @Override
-    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusProcessing(Pageable pageable) {
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByStatus("Processing",pageable);
-        List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-        return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
-    }
-
-    @Override
-    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusComplete(Pageable pageable) {
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByStatus("Complete",pageable);
-        List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-        return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
-    }
 
     @Override
     public Page<AppraisalRequestListDTO> getAllAppraisalRequests (Pageable pageable) {

@@ -16,12 +16,10 @@ import java.util.List;
 @RequestMapping("/api/appraisal-requests")
 public class AppraisalRequestController {
 
-    private final AppraisalRequestService appraisalRequestService;
-
     @Autowired
-    public AppraisalRequestController(AppraisalRequestService appraisalRequestService) {
-        this.appraisalRequestService = appraisalRequestService;
-    }
+    private AppraisalRequestService appraisalRequestService;
+
+
 
     @PostMapping("/createRequest")
     public ResponseEntity<String> createAppraisalRequest(@RequestBody AppraisalRequestDTO appraisalRequestDTO) {
@@ -29,27 +27,11 @@ public class AppraisalRequestController {
         return ResponseEntity.ok("Appraisal request created successfully.");
     }
 
-    @GetMapping("/getListWait")
+    @GetMapping("/findByStatus")
     public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatusWait(
-            @RequestParam int page, @RequestParam int size) {
+            @RequestParam String status,@RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatusWait(pageable);
-        return ResponseEntity.ok(appraisalRequests);
-    }
-
-    @GetMapping("/getListProcessing")
-    public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatusProcessing(
-            @RequestParam int page, @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatusProcessing(pageable);
-        return ResponseEntity.ok(appraisalRequests);
-    }
-
-    @GetMapping("/getListComplete")
-    public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatusComplete(
-            @RequestParam int page, @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatusComplete(pageable);
+        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatus(status,pageable);
         return ResponseEntity.ok(appraisalRequests);
     }
 

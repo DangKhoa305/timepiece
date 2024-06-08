@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 

@@ -2,6 +2,7 @@ package app.timepiece.controller;
 
 import app.timepiece.dto.AppraisalRequestDTO;
 import app.timepiece.dto.AppraisalRequestListDTO;
+import app.timepiece.dto.AppraisalRequestResponseDTO;
 import app.timepiece.service.AppraisalRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,31 +23,29 @@ public class AppraisalRequestController {
     @Autowired
     private AppraisalRequestService appraisalRequestService;
 
-
-    @PostMapping("/create")
-    public ResponseEntity<String> createAppraisalRequest(@RequestBody AppraisalRequestDTO appraisalRequestDTO) {
-        ResponseEntity<String> responseEntity = appraisalRequestService.createAppraisalRequest(appraisalRequestDTO);
-        if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
-            // Xử lý trường hợp người dùng không tồn tại
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseEntity.getBody());
-        } else {
-            // Xử lý trường hợp tạo yêu cầu đánh giá thành công
-            return ResponseEntity.status(HttpStatus.OK).body(responseEntity.getBody());
+    @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
+    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> createAppraisalRequest(@ModelAttribute AppraisalRequestDTO appraisalRequestDTO) {
+        try {
+             appraisalRequestService.createAppraisalRequest(appraisalRequestDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Request successfully ");
+        } catch (Error e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppraisalRequestDTO> getAppraisalRequestById(@PathVariable Long id) {
-        AppraisalRequestDTO appraisalRequestDTO = appraisalRequestService.getAppraisalRequestById(id);
+    public ResponseEntity<AppraisalRequestResponseDTO> getAppraisalRequestById(@PathVariable Long id) {
+        AppraisalRequestResponseDTO appraisalRequestDTO = appraisalRequestService.getAppraisalRequestById(id);
         return ResponseEntity.ok(appraisalRequestDTO);
     }
 
     @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
     @GetMapping("/findByStatus")
     public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatus(
-            @RequestParam String status,@RequestParam int page, @RequestParam int size) {
+            @RequestParam String status, @RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatus(status,pageable);
+        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatus(status, pageable);
         return ResponseEntity.ok(appraisalRequests);
     }
 

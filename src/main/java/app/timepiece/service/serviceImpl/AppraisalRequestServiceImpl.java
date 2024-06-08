@@ -1,5 +1,6 @@
 package app.timepiece.service.serviceImpl;
 
+import app.timepiece.dto.AppraisalRequestResponseDTO;
 import app.timepiece.entity.Account;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.entity.AppraisalRequest;
@@ -14,10 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,16 +36,17 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     @Autowired
     private RequestImageRepository requestImageRepository;
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
-    public ResponseEntity<String> createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO) { // Kiểm tra xem người dùng đã tồn tại không
+    public Boolean createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO)  {
         Optional<Account> optionalAccount = accountRepository.findByEmail(appraisalRequestDTO.getEmail());
 
         if (optionalAccount.isEmpty()) {
             // Nếu người dùng không tồn tại
             String errorMessage = "User not found with email: " + appraisalRequestDTO.getEmail();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            throw new Error( errorMessage);
         }
         // Lấy người dùng từ Optional<Account>
         Account account = optionalAccount.get();
@@ -63,17 +67,23 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setUpdateDate(new Date());
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
 
-        for (String imageUrl : appraisalRequestDTO.getImageUrls()) {
-            RequestImage requestImage = new RequestImage();
-            requestImage.setAppraisalRequest(savedAppraisalRequest);
-            requestImage.setImageUrl(imageUrl);
-            requestImageRepository.save(requestImage);
+        for (MultipartFile imageFile : appraisalRequestDTO.getImageFiles()) {
+            try {
+                Map uploadResult = cloudinaryService.uploadFile(imageFile);
+                String uploadedImageUrl = uploadResult.get("url").toString();
+                RequestImage requestImage = new RequestImage();
+                requestImage.setAppraisalRequest(savedAppraisalRequest);
+                requestImage.setImageUrl(uploadedImageUrl);
+                requestImageRepository.save(requestImage);
+            } catch (Exception e) {
+                throw new Error(e) ;
+            }
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Appraisal request created successfully.");
+        return true;
     }
 
     @Override
-    public AppraisalRequestDTO getAppraisalRequestById(Long id) {
+    public AppraisalRequestResponseDTO getAppraisalRequestById(Long id) {
         AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("AppraisalRequest not found with id: " + id));
 
@@ -84,14 +94,14 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .collect(Collectors.toList());
 
         // Create and return the DTO
-        return AppraisalRequestDTO.builder()
+        return AppraisalRequestResponseDTO.builder()
                 .name(appraisalRequest.getUsers().getName())
                 .email(appraisalRequest.getUsers().getAccount().getEmail())
                 .phoneNumber(appraisalRequest.getUsers().getPhoneNumber())
                 .hasOriginalBox(appraisalRequest.isHasOriginalBox())
                 .hasPapersOrWarranty(appraisalRequest.isHasPapersOrWarranty())
                 .hasPurchaseReceipt(appraisalRequest.isHasPurchaseReceipt())
-                .Arethereanystickers(appraisalRequest.isArethereanystickers())
+                .arethereanystickers(appraisalRequest.isArethereanystickers())
                 .age(appraisalRequest.getAge())
                 .desiredPrice(appraisalRequest.getDesiredPrice())
                 .description(appraisalRequest.getDescription())

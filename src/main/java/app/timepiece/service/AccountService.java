@@ -6,7 +6,7 @@ import java.util.Optional;
 
 
 public interface AccountService {
-        Account saveAccount(Account account);
-        Optional<Account> findByEmail(String email);
+//        Account saveAccount(Account account);
+//        Optional<Account> findByEmail(String email);
 }
 

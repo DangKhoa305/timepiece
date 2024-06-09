@@ -57,4 +57,11 @@ public class AppraisalRequestController {
         Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequests(pageable);
         return ResponseEntity.ok(appraisalRequests);
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestBody String newStatus) {
+        appraisalRequestService.updateStatus(id, newStatus);
+        return ResponseEntity.ok("Status updated successfully");
+
+    }
 }

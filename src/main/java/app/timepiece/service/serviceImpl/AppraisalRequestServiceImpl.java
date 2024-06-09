@@ -1,6 +1,7 @@
 package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.AppraisalRequestResponseDTO;
+import app.timepiece.dto.AppraiserRequestStatusDTO;
 import app.timepiece.entity.Account;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.entity.AppraisalRequest;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Date;
@@ -138,5 +140,26 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 appraisalRequest.getBrand(),
                 appraisalRequest.getUpdateDate()
         );
+    }
+
+    @Override
+    public AppraiserRequestStatusDTO updateStatus(Long id, String newStatus) {
+        Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            AppraisalRequest request = optionalRequest.get();
+            request.setStatus(newStatus);
+            request.setUpdateDate(new Date());
+            AppraisalRequest updatedRequest = appraisalRequestRepository.save(request);
+            return convertToStatusDTO(updatedRequest);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AppraisalRequest with id " + id + " not found");
+        }
+    }
+
+    private AppraiserRequestStatusDTO convertToStatusDTO(AppraisalRequest request) {
+        return AppraiserRequestStatusDTO.builder()
+                .id(request.getId())
+                .status(request.getStatus())
+                .build();
     }
 }

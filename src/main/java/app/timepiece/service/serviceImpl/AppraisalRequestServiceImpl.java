@@ -158,7 +158,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     private AppraiserRequestStatusDTO convertToStatusDTO(AppraisalRequest request) {
         return AppraiserRequestStatusDTO.builder()
-                .id(request.getId())
                 .status(request.getStatus())
                 .build();
     }

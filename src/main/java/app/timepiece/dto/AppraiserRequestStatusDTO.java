@@ -9,7 +9,6 @@ import lombok.*;
 @Builder
 
 public class AppraiserRequestStatusDTO {
-    private Long id;
     private String status;
 
 }

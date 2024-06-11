@@ -10,14 +10,13 @@ import app.timepiece.service.AppraisalRequestService;
 import app.timepiece.dto.AppraisalRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -139,4 +138,19 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 appraisalRequest.getUpdateDate()
         );
     }
+
+    @Override
+    public Boolean updateStatus(Long id, String newStatus) {
+        Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            AppraisalRequest request = optionalRequest.get();
+            request.setStatus(newStatus);
+            request.setUpdateDate(new Date());
+            appraisalRequestRepository.save(request);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AppraisalRequest with id " + id + " not found");
+        }
+    }
+
 }

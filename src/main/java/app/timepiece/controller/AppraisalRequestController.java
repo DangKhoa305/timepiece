@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/appraisal-requests")
@@ -56,5 +54,11 @@ public class AppraisalRequestController {
         Pageable pageable = PageRequest.of(page, size);
         Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequests(pageable);
         return ResponseEntity.ok(appraisalRequests);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam String newStatus) {
+        appraisalRequestService.updateStatus(id, newStatus);
+        return ResponseEntity.ok("Status updated successfully");
     }
 }

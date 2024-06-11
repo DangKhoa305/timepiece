@@ -1,7 +1,6 @@
 package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.AppraisalRequestResponseDTO;
-import app.timepiece.dto.AppraiserRequestStatusDTO;
 import app.timepiece.entity.Account;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.entity.AppraisalRequest;
@@ -11,7 +10,6 @@ import app.timepiece.service.AppraisalRequestService;
 import app.timepiece.dto.AppraisalRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -143,22 +140,17 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     }
 
     @Override
-    public AppraiserRequestStatusDTO updateStatus(Long id, String newStatus) {
+    public Boolean updateStatus(Long id, String newStatus) {
         Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             AppraisalRequest request = optionalRequest.get();
             request.setStatus(newStatus);
             request.setUpdateDate(new Date());
-            AppraisalRequest updatedRequest = appraisalRequestRepository.save(request);
-            return convertToStatusDTO(updatedRequest);
+            appraisalRequestRepository.save(request);
+            return true;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AppraisalRequest with id " + id + " not found");
         }
     }
 
-    private AppraiserRequestStatusDTO convertToStatusDTO(AppraisalRequest request) {
-        return AppraiserRequestStatusDTO.builder()
-                .status(request.getStatus())
-                .build();
-    }
 }

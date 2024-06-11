@@ -4,13 +4,12 @@ import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.dto.WatchDTO;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@CrossOrigin
 @RestController
 @RequestMapping("/api/watches")
 public class WatchController {

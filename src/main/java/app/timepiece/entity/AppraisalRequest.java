@@ -23,6 +23,7 @@ public class AppraisalRequest {
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;
     private boolean Arethereanystickers;
+    private String region;
     private int age;
     private String status;
     private Date createDate;

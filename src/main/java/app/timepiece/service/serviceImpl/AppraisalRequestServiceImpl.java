@@ -61,6 +61,7 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setDescription(appraisalRequestDTO.getDescription());
         appraisalRequest.setBrand(appraisalRequestDTO.getBrand());
         appraisalRequest.setReferenceCode(appraisalRequestDTO.getReferenceCode());
+        appraisalRequest.setRegion(appraisalRequestDTO.getRegion());
         appraisalRequest.setStatus("wait");
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
@@ -102,6 +103,7 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .hasPurchaseReceipt(appraisalRequest.isHasPurchaseReceipt())
                 .arethereanystickers(appraisalRequest.isArethereanystickers())
                 .age(appraisalRequest.getAge())
+                .region(appraisalRequest.getRegion())
                 .desiredPrice(appraisalRequest.getDesiredPrice())
                 .description(appraisalRequest.getDescription())
                 .brand(appraisalRequest.getBrand())

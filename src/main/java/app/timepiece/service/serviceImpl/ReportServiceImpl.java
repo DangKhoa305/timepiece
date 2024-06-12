@@ -2,6 +2,7 @@ package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.ReportDTO;
 import app.timepiece.dto.ReportResponseDTO;
+import app.timepiece.dto.SearchReportDTO;
 import app.timepiece.entity.Report;
 import app.timepiece.entity.ReportImage;
 import app.timepiece.entity.User;
@@ -10,6 +11,9 @@ import app.timepiece.repository.ReportRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
@@ -103,5 +107,27 @@ public class ReportServiceImpl implements ReportService {
                 .reportStatus(report.getReportStatus())
                 .imageUrls(imageUrls)
                 .build();
+    }
+
+    @Override
+    public Page<SearchReportDTO> searchReports(Long id, String brand, String reportStatus, Date createDate, Pageable pageable) {
+        Page<Report> reportPage = reportRepository.searchReport(
+                id, brand, reportStatus, createDate, pageable);
+
+
+        return new PageImpl<>(
+                reportPage.getContent().stream().map(this::convertToDTO).collect(Collectors.toList()),
+                pageable,
+                reportPage.getTotalElements()
+        );
+    }
+
+    private SearchReportDTO convertToDTO(Report report) {
+        SearchReportDTO dto = new SearchReportDTO();
+        dto.setId(report.getId());
+        dto.setBrand(report.getBrand());
+        dto.setReportStatus(report.getReportStatus());
+        dto.setCreateDate(report.getCreateDate());
+        return dto;
     }
 }

@@ -4,8 +4,8 @@ import app.timepiece.dto.ErrorResponse;
 import app.timepiece.dto.JwtAuthenticationResponse;
 import app.timepiece.dto.LoginRequestDTO;
 import app.timepiece.dto.RegistrationRequestDTO;
+import app.timepiece.entity.User;
 import app.timepiece.security.JwtTokenProvider;
-import app.timepiece.service.AccountService;
 import app.timepiece.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -42,8 +45,17 @@ public class AuthController {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtTokenProvider.generateToken(loginRequest.getEmail());
-            return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+
+            String email = loginRequest.getEmail();
+            Optional<User> userOptional = userService.findByAccountEmail(email);
+            if (!userOptional.isPresent()) {
+                throw new UsernameNotFoundException("User not found with email: " + email);
+            }
+            User user = userOptional.get();
+            String jwt = jwtTokenProvider.generateToken(email);
+            JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, user.getName(), user.getRole().getRoleName(), user.getId());
+            return ResponseEntity.ok(response);
+
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid email or password"));
         }

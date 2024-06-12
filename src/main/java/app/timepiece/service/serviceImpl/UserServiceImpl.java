@@ -72,6 +72,10 @@ public class UserServiceImpl implements UserService {
 
         return Optional.of(user);
     }
+    @Override
+    public Optional<User> findByAccountEmail(String email) {
+        return userRepository.findByAccountEmail(email);
+    }
 }
 
 

@@ -20,6 +20,7 @@ public class AppraisalRequestDTO {
     private boolean hasPurchaseReceipt;
     private boolean arethereanystickers;
     private int age;
+    private String region;
     private double desiredPrice;
     private String description;
     private String brand;

@@ -52,7 +52,7 @@ public class AuthController {
                 throw new UsernameNotFoundException("User not found with email: " + email);
             }
             User user = userOptional.get();
-            String jwt = jwtTokenProvider.generateToken(email);
+            String jwt = jwtTokenProvider.generateToken(user.getId());
             JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, user.getName(), user.getRole().getRoleName(), user.getId());
             return ResponseEntity.ok(response);
 

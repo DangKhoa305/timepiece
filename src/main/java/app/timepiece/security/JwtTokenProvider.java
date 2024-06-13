@@ -11,12 +11,12 @@ public class JwtTokenProvider {
 
 
 
-    public String generateToken(String email) {
+    public String generateToken(Long id) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JwtSecret.JWT_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(id))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(JwtSecret.key, SignatureAlgorithm.HS512)

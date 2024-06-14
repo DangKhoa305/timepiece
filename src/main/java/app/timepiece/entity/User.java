@@ -28,10 +28,12 @@ public class User {
 
     @OneToOne
     @JoinColumn(name = "account_id")
+    @ToString.Exclude
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @ToString.Exclude
     private Role role;
 
     @OneToMany(mappedBy = "user")

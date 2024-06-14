@@ -1,16 +1,20 @@
 package app.timepiece.service.serviceImpl;
 
+import app.timepiece.dto.CreateWatchDTO;
 import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.dto.WatchDTO;
-import app.timepiece.entity.Watch;
-import app.timepiece.entity.WatchImage;
-import app.timepiece.repository.WatchImageRepository;
-import app.timepiece.repository.WatchRepository;
+import app.timepiece.entity.*;
+import app.timepiece.repository.*;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +25,19 @@ public class WatchServiceImpl implements WatchService {
 
     @Autowired
     private WatchImageRepository watchImageRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BrandRepository brandRepository;
+
+    @Autowired
+    private WatchTypeRepository watchTypeRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
 
     @Override
     public List<WatchDTO> getAllWatches() {
@@ -69,4 +86,54 @@ public class WatchServiceImpl implements WatchService {
                 imageUrl
         );
     }
+
+    @Transactional
+    @Override
+    public Boolean createWatch(CreateWatchDTO watchDTO) {
+        User user = userRepository.findById(watchDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Brand brand = brandRepository.findById(watchDTO.getBrandId())
+                .orElseThrow(() -> new RuntimeException("Brand not found"));
+        WatchType watchType = watchTypeRepository.findById(watchDTO.getWatchTypeId())
+                .orElseThrow(() -> new RuntimeException("Watch type not found"));
+
+        Watch watch = new Watch();
+        watch.setUser(user);
+        watch.setName(watchDTO.getName());
+        watch.setWatchStatus(watchDTO.getWatchStatus());
+        watch.setDescription(watchDTO.getDescription());
+        watch.setPrice(watchDTO.getPrice());
+        watch.setBrand(brand);
+        watch.setYearProduced(watchDTO.getYearProduced());
+        watch.setModel(watchDTO.getModel());
+        watch.setMaterial(watchDTO.getMaterial());
+        watch.setWatchStrap(watchDTO.getWatchStrap());
+        watch.setSize(watchDTO.getSize());
+        watch.setAccessories(watchDTO.getAccessories());
+        watch.setReferenceCode(watchDTO.getReferenceCode());
+        watch.setPlaceOfProduction(watchDTO.getPlaceOfProduction());
+        watch.setWatchType(watchType);
+        watch.setStatus("wait");
+        watch.setAddress(watchDTO.getAddress());
+        watch.setCreateDate(new Date());
+        watch.setUpdateDate(new Date());
+
+        Watch savedWatch = watchRepository.save(watch);
+
+        for (MultipartFile imageFile : watchDTO.getImageFiles()) {
+            try {
+                Map uploadResult = cloudinaryService.uploadFile(imageFile);
+                String uploadedImageUrl = uploadResult.get("url").toString();
+                WatchImage requestImage = new WatchImage();
+                requestImage.setWatch(savedWatch);
+                requestImage.setImageUrl(uploadedImageUrl);
+                watchImageRepository.save(requestImage);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
+        }
+        return true;
+
+    }
+
 }

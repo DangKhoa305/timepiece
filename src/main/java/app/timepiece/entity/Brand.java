@@ -23,6 +23,7 @@ public class Brand {
     private String status;
 
     @OneToMany(mappedBy = "brand")
+    @ToString.Exclude
     private Set<Watch> watches;
 
 }

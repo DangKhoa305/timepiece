@@ -1,5 +1,6 @@
 package app.timepiece.security;
 
+import app.timepiece.service.UserService;
 import app.timepiece.service.serviceImpl.CustomUserDetailsService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = extractJwtFromRequest(request);
 
         if (jwtToken != null && validateToken(jwtToken)) {
-            UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(getEmailFromJWT(jwtToken));
+           String userId = getUserIdFromJWT(jwtToken);
+           String email = userService.findEmailByUserId(Long.valueOf(userId));
+            UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(email);
 
             // Tạo đối tượng Authentication và set vào SecurityContext
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -38,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    public String getEmailFromJWT(String token) {
+    public String getUserIdFromJWT(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(JwtSecret.key)
                 .build()

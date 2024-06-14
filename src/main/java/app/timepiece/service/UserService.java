@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface UserService {
     Optional<User> registerUser(RegistrationRequestDTO registrationRequest);
     Optional<User> findByAccountEmail(String email);
+    String findEmailByUserId(Long userId);
 }

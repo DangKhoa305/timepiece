@@ -25,6 +25,7 @@ public class User {
     private Date dateCreate;
     private String gender;
     private String birthday;
+    private String citizenID;
 
     @OneToOne
     @JoinColumn(name = "account_id")

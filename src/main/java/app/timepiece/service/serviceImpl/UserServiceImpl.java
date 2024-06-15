@@ -1,6 +1,8 @@
 package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.RegistrationRequestDTO;
+import app.timepiece.dto.UpdateUserDTO;
+import app.timepiece.dto.UserDTO;
 import app.timepiece.entity.Account;
 import app.timepiece.entity.Role;
 import app.timepiece.entity.User;
@@ -12,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -27,6 +31,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
 
     @Transactional
     @Override
@@ -81,6 +89,91 @@ public class UserServiceImpl implements UserService {
     public String findEmailByUserId(Long userId) {
         return userRepository.findEmailByUserId(userId);
     }
+
+    @Override
+    public UserDTO getUserById(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return convertToDTO(user);
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+    private UserDTO convertToDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setName(user.getName());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setAvatar(user.getAvatar());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setDateCreate(user.getDateCreate());
+        userDTO.setGender(user.getGender());
+        userDTO.setBirthday(user.getBirthday());
+        userDTO.setCitizenID(user.getCitizenID());
+        return userDTO;
+    }
+
+
+    @Override
+    public UserDTO updateUserById(Long id, UpdateUserDTO updateUserDTO) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            updateUserEntity(user, updateUserDTO);
+            userRepository.save(user);
+            return convertToDTO(user);
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+
+    private void updateUserEntity(User user, UpdateUserDTO updateUserDTO) {
+        if (updateUserDTO.getName() != null) {
+            user.setName(updateUserDTO.getName());
+        }
+        if (updateUserDTO.getAddress() != null) {
+            user.setAddress(updateUserDTO.getAddress());
+        }
+        if (updateUserDTO.getAvatar() != null) {
+            String avatarUrl = uploadImage(updateUserDTO.getAvatar());
+            user.setAvatar(avatarUrl);
+        }
+
+        if (updateUserDTO.getPhoneNumber() != null) {
+            user.setPhoneNumber(updateUserDTO.getPhoneNumber());
+        }
+        if (updateUserDTO.getStatus() != null) {
+            user.setStatus(updateUserDTO.getStatus());
+        }
+        if (updateUserDTO.getGender() != null) {
+            user.setGender(updateUserDTO.getGender());
+        }
+        if (updateUserDTO.getBirthday() != null) {
+            user.setBirthday(updateUserDTO.getBirthday());
+        }
+        if (updateUserDTO.getCitizenID() != null) {
+            user.setCitizenID(updateUserDTO.getCitizenID());
+        }
+    }
+
+
+    private String uploadImage(MultipartFile imageFile) {
+        try {
+            Map<String, Object> uploadResult = cloudinaryService.uploadFile(imageFile);
+            return uploadResult.get("url").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image", e);
+        }
+    }
+
+
+
+
+
 }
 
 

@@ -1,8 +1,9 @@
 package app.timepiece.entity;
 
-import app.timepiece.dto.WatchDTO;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "Watch")
@@ -18,10 +19,14 @@ public class Watch {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
     private User user;
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String watchStatus;
 
     @Column(nullable = false)
     private String status;
@@ -34,6 +39,7 @@ public class Watch {
 
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
+    @ToString.Exclude
     private Brand brand;
 
     @Column(nullable = false)
@@ -57,7 +63,17 @@ public class Watch {
     @Column(nullable = false)
     private String referenceCode;
 
+    @Column(nullable = false)
+    private String placeOfProduction;
+
+    @Column(nullable = false)
+    private String address;
+
+    private Date createDate;
+    private Date updateDate;
+
     @ManyToOne
     @JoinColumn(name = "watch_type_id", nullable = false)
+    @ToString.Exclude
     private WatchType watchType;
 }

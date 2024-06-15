@@ -17,10 +17,8 @@ public class WatchImage {
 
     @ManyToOne
     @JoinColumn(name = "watch_id", nullable = false)
+    @ToString.Exclude
     private Watch watch;
-
-    @Column(nullable = false)
-    private String description;
 
     @Column(nullable = false)
     private String imageUrl;

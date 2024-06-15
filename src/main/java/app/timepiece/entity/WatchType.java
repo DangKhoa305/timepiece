@@ -19,6 +19,7 @@ public class WatchType {
     private String typeName;
 
     @OneToMany(mappedBy = "watchType")
+    @ToString.Exclude
     private Set<Watch> watches;
 
 }

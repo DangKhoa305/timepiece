@@ -3,6 +3,8 @@ package app.timepiece.controller;
 import app.timepiece.dto.CreateWatchDTO;
 import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.dto.WatchDTO;
+import app.timepiece.dto.WatchUpdateRequestDTO;
+import app.timepiece.entity.Watch;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,4 +51,19 @@ public class WatchController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam String status) {
+         watchService.updateStatus(id, status);
+        return ResponseEntity.ok("Watch status updated successfully");
+    }
+
+    @PutMapping(value = "/{watchId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> updateWatch(
+            @PathVariable Long watchId,
+            @ModelAttribute WatchUpdateRequestDTO updateRequest) {
+       watchService.updateWatch(watchId, updateRequest);
+        return ResponseEntity.ok("Watch updated successfully");
+    }
+
 }

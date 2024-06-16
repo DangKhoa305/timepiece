@@ -3,18 +3,17 @@ package app.timepiece.service.serviceImpl;
 import app.timepiece.dto.CreateWatchDTO;
 import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.dto.WatchDTO;
+import app.timepiece.dto.WatchUpdateRequestDTO;
 import app.timepiece.entity.*;
 import app.timepiece.repository.*;
 import app.timepiece.service.WatchService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,5 +142,66 @@ public class WatchServiceImpl implements WatchService {
         watch.setStatus(newStatus);
         return watchRepository.save(watch);
     }
+
+    @Transactional
+    @Override
+    public Watch updateWatch(Long watchId, WatchUpdateRequestDTO updateRequest) {
+        Optional<Watch> optionalWatch = watchRepository.findById(watchId);
+        if (optionalWatch.isPresent()) {
+            Watch watch = optionalWatch.get();
+
+            // Update basic fields from DTO
+            watch.setName(updateRequest.getName());
+            watch.setWatchStatus(updateRequest.getWatchStatus());
+            watch.setDescription(updateRequest.getDescription());
+            watch.setPrice(updateRequest.getPrice());
+            watch.setYearProduced(updateRequest.getYearProduced());
+            watch.setModel(updateRequest.getModel());
+            watch.setMaterial(updateRequest.getMaterial());
+            watch.setWatchStrap(updateRequest.getWatchStrap());
+            watch.setSize(updateRequest.getSize());
+            watch.setAccessories(updateRequest.getAccessories());
+            watch.setReferenceCode(updateRequest.getReferenceCode());
+            watch.setPlaceOfProduction(updateRequest.getPlaceOfProduction());
+            watch.setAddress(updateRequest.getAddress());
+            watch.setStatus("wait");
+            watch.setUpdateDate(new Date());
+
+            // Update Brand if provided
+            if (updateRequest.getBrandId() != null) {
+                Optional<Brand> optionalBrand = brandRepository.findById(updateRequest.getBrandId());
+                optionalBrand.ifPresent(watch::setBrand);
+            }
+
+            if (updateRequest.getImageFiles() != null && !updateRequest.getImageFiles().isEmpty()) {
+            // Delete current images associated with the watch
+            watchImageRepository.deleteByWatch(watch);
+
+            // Save new images
+            List<WatchImage> newImages = new ArrayList<>();
+            for (MultipartFile imageFile : updateRequest.getImageFiles()) {
+                try {
+                    Map<String, Object> uploadResult = cloudinaryService.uploadFile(imageFile);
+                    String uploadedImageUrl = uploadResult.get("url").toString();
+                    WatchImage newImage = new WatchImage();
+                    newImage.setWatch(watch);
+                    newImage.setImageUrl(uploadedImageUrl);
+                    newImages.add(newImage);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to upload image", e);
+                }
+            }
+
+            // Save all new images
+            watchImageRepository.saveAll(newImages);
+            }
+            // Save the updated watch entity
+            return watchRepository.save(watch);
+        } else {
+            // Handle watch not found case
+            throw new RuntimeException("Watch not found with id: " + watchId);
+        }
+    }
+
 
 }

@@ -13,7 +13,6 @@ public interface WatchService {
     List<WatchDTO> getAllWatches();
     List<ShowWatchDTO> getTop12Watches();
     List<ShowWatchDTO> searchWatchesByName(String name);
-
-    @Transactional
     Boolean createWatch(CreateWatchDTO watchDTO) throws IOException;
+    Watch updateStatus(Long id, String newStatus);
 }

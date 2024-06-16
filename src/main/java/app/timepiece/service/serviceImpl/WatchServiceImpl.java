@@ -136,4 +136,12 @@ public class WatchServiceImpl implements WatchService {
 
     }
 
+    @Override
+    @Transactional
+    public Watch updateStatus(Long id, String newStatus) {
+        Watch watch = watchRepository.findById(id).orElseThrow(() -> new RuntimeException("Watch not found"));
+        watch.setStatus(newStatus);
+        return watchRepository.save(watch);
+    }
+
 }

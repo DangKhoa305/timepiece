@@ -1,9 +1,6 @@
 package app.timepiece.service.serviceImpl;
 
-import app.timepiece.dto.CreateWatchDTO;
-import app.timepiece.dto.ShowWatchDTO;
-import app.timepiece.dto.WatchDTO;
-import app.timepiece.dto.WatchUpdateRequestDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.*;
 import app.timepiece.repository.*;
 import app.timepiece.service.WatchService;
@@ -201,6 +198,62 @@ public class WatchServiceImpl implements WatchService {
             // Handle watch not found case
             throw new RuntimeException("Watch not found with id: " + watchId);
         }
+    }
+
+    @Override
+    public WatchDTO getWatchById(Long id) {
+        Optional<Watch> watchOptional = watchRepository.findById(id);
+        if (watchOptional.isPresent()) {
+            Watch watch = watchOptional.get();
+            return convertToDTO(watch);
+        } else {
+            throw new RuntimeException("Watch not found with id: " + id);
+        }
+    }
+
+    private WatchDTO convertToDTO(Watch watch) {
+        WatchDTO watchDTO = new WatchDTO();
+        watchDTO.setId(watch.getId());
+        watchDTO.setUserId(watch.getUser().getId());
+        watchDTO.setName(watch.getName());
+        watchDTO.setWatchStatus(watch.getWatchStatus());
+        watchDTO.setStatus(watch.getStatus());
+        watchDTO.setDescription(watch.getDescription());
+        watchDTO.setPrice(watch.getPrice());
+        watchDTO.setBrandName(watch.getBrand().getBrandName());
+        watchDTO.setYearProduced(watch.getYearProduced());
+        watchDTO.setModel(watch.getModel());
+        watchDTO.setMaterial(watch.getMaterial());
+        watchDTO.setWatchStrap(watch.getWatchStrap());
+        watchDTO.setSize(watch.getSize());
+        watchDTO.setAccessories(watch.getAccessories());
+        watchDTO.setReferenceCode(watch.getReferenceCode());
+        watchDTO.setPlaceOfProduction(watch.getPlaceOfProduction());
+        watchDTO.setAddress(watch.getAddress());
+        watchDTO.setCreateDate(watch.getCreateDate());
+        watchDTO.setUpdateDate(watch.getUpdateDate());
+        watchDTO.setWatchTypeName(watch.getWatchType().getTypeName());
+        return watchDTO;
+    }
+
+
+    @Override
+    public List<WatchSellerDTO> getWatchesByUserIdAndStatus(Long userId, String status) {
+        List<Watch> watches = watchRepository.findByUserIdAndStatus(userId, status);
+        return watches.stream()
+                .map(this::convertToSellerDTO)
+                .collect(Collectors.toList());
+    }
+
+    private WatchSellerDTO convertToSellerDTO(Watch watch) {
+        WatchSellerDTO watchDTO = new WatchSellerDTO();
+        watchDTO.getImageUrl();
+        watchDTO.setName(watch.getName());
+        watchDTO.setSize(watch.getSize());
+        watchDTO.setPrice(watch.getPrice());
+        watchDTO.setCreateDate(watch.getCreateDate());
+        watchDTO.setAddress(watch.getAddress());
+        return watchDTO;
     }
 
 

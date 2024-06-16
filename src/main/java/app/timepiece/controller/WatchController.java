@@ -1,9 +1,6 @@
 package app.timepiece.controller;
 
-import app.timepiece.dto.CreateWatchDTO;
-import app.timepiece.dto.ShowWatchDTO;
-import app.timepiece.dto.WatchDTO;
-import app.timepiece.dto.WatchUpdateRequestDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.Watch;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +61,19 @@ public class WatchController {
             @ModelAttribute WatchUpdateRequestDTO updateRequest) {
        watchService.updateWatch(watchId, updateRequest);
         return ResponseEntity.ok("Watch updated successfully");
+    }
+
+
+    @GetMapping("/{id}/getWatchById")
+    public ResponseEntity<WatchDTO> getWatchById(@PathVariable Long id) {
+        WatchDTO watchDTO = watchService.getWatchById(id);
+        return ResponseEntity.ok(watchDTO);
+    }
+
+    @GetMapping("/user/{userId}/status/{status}")
+    public ResponseEntity<List<WatchSellerDTO>> getWatchesByUserIdAndStatus(@PathVariable Long userId, @PathVariable String status) {
+        List<WatchSellerDTO> watches = watchService.getWatchesByUserIdAndStatus(userId, status);
+        return ResponseEntity.ok(watches);
     }
 
 }

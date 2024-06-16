@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface WatchRepository extends JpaRepository<Watch, Long> {
     List<Watch> findByNameContainingIgnoreCase(String name);
+    List<Watch> findByUserIdAndStatus(Long userId, String status);
 }

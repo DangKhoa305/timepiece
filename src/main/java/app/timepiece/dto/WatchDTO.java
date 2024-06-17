@@ -2,6 +2,7 @@ package app.timepiece.dto;
 
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -10,9 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class WatchDTO {
-
-    private Long id;
+    private long id;
+    private Long userId;
     private String name;
+    private String watchStatus;
     private String status;
     private String description;
     private double price;
@@ -24,8 +26,10 @@ public class WatchDTO {
     private String size;
     private String accessories;
     private String referenceCode;
+    private String placeOfProduction;
+    private String address;
+    private Date createDate;
+    private Date updateDate;
     private String watchTypeName;
-    private List<String> imageUrls;
-
-
 }
+

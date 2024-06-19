@@ -29,21 +29,26 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public PaymentDTO createVnPayPayment(HttpServletRequest request) {
-        long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
-        String bankCode = request.getParameter("bankCode");
+    @Autowired
+    private UserRepository orderRepository;
 
-        Long userId = Long.parseLong(request.getParameter("userId"));
+    @Override
+    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId) {
+        long amountInCents = amount * 100L;
+        //long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
+//        String bankCode = request.getParameter("bankCode");
+//        Long userId = Long.parseLong(request.getParameter("userId"));
+//        Long orderId = Long.parseLong(request.getParameter("orderId"));
 
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
-        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amountInCents));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
         }
-        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress());
 
-        String transactionId = UUID.randomUUID().toString();
+      //  String transactionId = UUID.randomUUID().toString();
+        String transactionId = String.valueOf(orderId);
         vnpParamsMap.put("vnp_TxnRef", transactionId);
 
         // Update order info
@@ -61,7 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Transaction transaction = new Transaction();
         transaction.setTransactionId(transactionId);
-        transaction.setAmount(amount);
+        transaction.setAmount(amountInCents);
         transaction.setBankCode(bankCode);
         transaction.setStatus("PENDING");
         transaction.setPaymentUrl(paymentUrl);

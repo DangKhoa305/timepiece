@@ -16,8 +16,8 @@ public class VNPAYConfig {
     @Getter
     private String vnp_PayUrl ="https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
-    private String vnp_ReturnUrl = "http://localhost:8080/payment/vn-pay-callback";
-
+   // private String vnp_ReturnUrl = "http://localhost:8080/payment/vn-pay-callback";
+    private String vnp_ReturnUrl = "https://timepiece.onrender.com/payment/vn-pay-callback";
     private String vnp_TmnCode = "JCNP2TIA" ;
 
     @Getter

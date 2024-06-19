@@ -9,13 +9,11 @@ import app.timepiece.repository.TransactionRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.service.PaymentService;
 import app.timepiece.util.VNPayUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -29,16 +27,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserRepository orderRepository;
 
     @Override
     public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId) {
         long amountInCents = amount * 100L;
-        //long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
-//        String bankCode = request.getParameter("bankCode");
-//        Long userId = Long.parseLong(request.getParameter("userId"));
-//        Long orderId = Long.parseLong(request.getParameter("orderId"));
+
 
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amountInCents));
@@ -47,7 +40,6 @@ public class PaymentServiceImpl implements PaymentService {
         }
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress());
 
-      //  String transactionId = UUID.randomUUID().toString();
         String transactionId = String.valueOf(orderId);
         vnpParamsMap.put("vnp_TxnRef", transactionId);
 

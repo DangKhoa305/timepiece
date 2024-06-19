@@ -9,13 +9,11 @@ import app.timepiece.repository.TransactionRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.service.PaymentService;
 import app.timepiece.util.VNPayUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -29,21 +27,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public PaymentDTO createVnPayPayment(HttpServletRequest request) {
-        long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
-        String bankCode = request.getParameter("bankCode");
 
-        Long userId = Long.parseLong(request.getParameter("userId"));
+    @Override
+    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId) {
+        long amountInCents = amount * 100L;
+
 
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
-        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amountInCents));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
         }
-        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress());
 
-        String transactionId = UUID.randomUUID().toString();
+        String transactionId = String.valueOf(orderId);
         vnpParamsMap.put("vnp_TxnRef", transactionId);
 
         // Update order info
@@ -61,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Transaction transaction = new Transaction();
         transaction.setTransactionId(transactionId);
-        transaction.setAmount(amount);
+        transaction.setAmount(amountInCents);
         transaction.setBankCode(bankCode);
         transaction.setStatus("PENDING");
         transaction.setPaymentUrl(paymentUrl);

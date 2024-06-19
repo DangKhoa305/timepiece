@@ -1,11 +1,9 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -20,15 +18,23 @@ public class Order {
     private Long id;
 
     private String note;
-    private String orderDate;
+    private Date orderDate;
     private double totalPrice;
+    private Date createDate;
+    private Date updateDate;
+    private String status;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "order")
+    @ToString.Exclude
     private Set<Feedback> feedbacks;
 
-    // Getters and setters
+    @ManyToOne
+    @JoinColumn(name = "watch_id", nullable = false)
+    @ToString.Exclude
+    private Watch watch;
 }

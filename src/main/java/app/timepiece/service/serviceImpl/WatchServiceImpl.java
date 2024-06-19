@@ -4,8 +4,10 @@ import app.timepiece.dto.*;
 import app.timepiece.entity.*;
 import app.timepiece.repository.*;
 import app.timepiece.service.WatchService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -256,5 +258,23 @@ public class WatchServiceImpl implements WatchService {
         return watchDTO;
     }
 
+    @Override
+    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus,status, pageable);
+        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
+                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
+        return searchwatchDTOs;
+    }
+
+    private SearchWatchDTO convertToSearchWatchDTO(Watch watch) {
+        SearchWatchDTO searchWatchDTO = new SearchWatchDTO();
+        searchWatchDTO.setId(watch.getId());
+        searchWatchDTO.setName(watch.getName());
+        searchWatchDTO.setPrice(watch.getPrice());
+        searchWatchDTO.setStatus(watch.getWatchStatus());
+        searchWatchDTO.setStatus(watch.getStatus());
+
+        return searchWatchDTO;
+    }
 
 }

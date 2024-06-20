@@ -4,6 +4,9 @@ import app.timepiece.dto.*;
 import app.timepiece.entity.Watch;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,4 +79,18 @@ public class WatchController {
         return ResponseEntity.ok(watches);
     }
 
+    @GetMapping("/searchWatch")
+    public Page<SearchWatchDTO> searchWatches(
+            @RequestParam(required = false) Double price,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String watchStatus,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return watchService.searchWatches(price, address, type, brand, watchStatus, status, pageable);
+    }
 }

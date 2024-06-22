@@ -21,7 +21,6 @@ public class AppraisalRequestController {
     @Autowired
     private AppraisalRequestService appraisalRequestService;
 
-    @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<String> createAppraisalRequest(@ModelAttribute AppraisalRequestDTO appraisalRequestDTO) {
         try {

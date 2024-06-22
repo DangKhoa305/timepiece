@@ -19,6 +19,7 @@ public class AppraisalRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long code;
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;

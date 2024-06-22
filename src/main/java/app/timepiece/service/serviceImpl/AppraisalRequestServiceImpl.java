@@ -65,6 +65,12 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setStatus("wait");
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
+
+        // Lấy mã code lớn nhất hiện tại và tăng thêm 1
+        Long maxCode = appraisalRequestRepository.findMaxCode();
+        Long newCode = maxCode + 1;
+        appraisalRequest.setCode(newCode);
+
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
 
         for (MultipartFile imageFile : appraisalRequestDTO.getImageFiles()) {
@@ -137,6 +143,8 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 appraisalRequest.getId(),
                 appraisalRequest.getCreateDate(),
                 appraisalRequest.getBrand(),
+                appraisalRequest.getStatus(),
+                appraisalRequest.getCode(),
                 appraisalRequest.getUpdateDate()
         );
     }

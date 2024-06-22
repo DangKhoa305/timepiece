@@ -13,5 +13,7 @@ public class AppraisalRequestListDTO {
     private Long id;
     private Date createDate;
     private String brand;
+    private String status;
+    private Long code;
     private Date updateDate;
 }

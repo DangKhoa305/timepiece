@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AppraisalRequestService {
     Boolean createAppraisalRequest(AppraisalRequestDTO appraisalRequestDTO);
     AppraisalRequestResponseDTO getAppraisalRequestById(Long id);
-    Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatus(String status, Pageable pageable);
     Page<AppraisalRequestListDTO> getAllAppraisalRequests(Pageable pageable);
     Boolean updateStatus(Long id, String newStatus);
-
+    Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusAndAppraiser(String status, Long appraiserId, Pageable pageable);
+    Page<AppraisalRequestListDTO> getAllAppraisalRequestsByUser(Long userId, Pageable pageable);
     @Transactional
     Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId);
 }

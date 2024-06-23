@@ -48,11 +48,11 @@ public class AppraisalRequestController {
     }
 
     @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
-    @GetMapping("/findByStatus")
-    public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatus(
-            @RequestParam String status, @RequestParam int page, @RequestParam int size) {
+    @GetMapping("/findByStatusAndAppraiser")
+    public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByStatusAndAppraiser(
+            @RequestParam(required = false) String status, @RequestParam Long appraiserId, @RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatus(status, pageable);
+        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByStatusAndAppraiser(status, appraiserId, pageable);
         return ResponseEntity.ok(appraisalRequests);
     }
 
@@ -83,5 +83,13 @@ public class AppraisalRequestController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/findByUser")
+    public ResponseEntity<Page<AppraisalRequestListDTO>> getAppraisalRequestsByUser(
+            @RequestParam Long userId, @RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByUser(userId, pageable);
+        return ResponseEntity.ok(appraisalRequests);
     }
 }

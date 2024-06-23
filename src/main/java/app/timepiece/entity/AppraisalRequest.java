@@ -19,6 +19,10 @@ public class AppraisalRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String username;
+    private String email;
+    private String phoneNumber;
+    private String address;
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;

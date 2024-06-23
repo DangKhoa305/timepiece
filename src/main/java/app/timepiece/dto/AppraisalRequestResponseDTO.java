@@ -14,6 +14,7 @@ public class AppraisalRequestResponseDTO {
         private String name;
         private String email;
         private String phoneNumber;
+        private String address;
         private boolean hasOriginalBox;
         private boolean hasPapersOrWarranty;
         private boolean hasPurchaseReceipt;

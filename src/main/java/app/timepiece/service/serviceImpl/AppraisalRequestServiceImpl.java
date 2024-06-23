@@ -118,14 +118,21 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     }
 
     @Override
-    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatus(String status, Pageable pageable) {
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByStatus(status,pageable);
+    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusAndAppraiser(String status, Long appraiserId, Pageable pageable) {
+        User appraiser = userRepository.findById(appraiserId)
+                .orElseThrow(() -> new RuntimeException("Appraiser not found"));
+
+        Page<AppraisalRequest> appraisalRequestsPage;
+        if (status == null || status.isEmpty()) {
+            appraisalRequestsPage = appraisalRequestRepository.findAllByAppraiser(appraiser, pageable);
+        } else {
+            appraisalRequestsPage = appraisalRequestRepository.findAllByStatusAndAppraiser(status, appraiser, pageable);
+        }
         List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
     }
-
 
     @Override
     public Page<AppraisalRequestListDTO> getAllAppraisalRequests (Pageable pageable) {
@@ -186,5 +193,14 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AppraisalRequest with id " + id + " not found");
         }
     }
-
+    @Override
+    public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByUser(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByUsers(user, pageable);
+        List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
+    }
 }

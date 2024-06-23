@@ -13,6 +13,7 @@ public class SearchWatchDTO {
     private String watchstatus;
     private double price;
     private String watchImage;
+    private String accessories;
     private String status;
 
 

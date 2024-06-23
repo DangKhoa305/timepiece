@@ -6,6 +6,7 @@ import app.timepiece.service.serviceImpl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -49,6 +50,8 @@ public class SecurityConfig {
                 .authorizeRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatch").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/watches/top12/Approved").permitAll()
                         .anyRequest().authenticated() // Tất cả các yêu cầu khác cần phải xác thực
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

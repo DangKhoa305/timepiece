@@ -10,12 +10,13 @@ import java.util.List;
 
 public interface WatchService {
     List<WatchDTO> getAllWatches();
-    List<ShowWatchDTO> getTop12Watches();
+//    List<ShowWatchDTO> getTop12Watches();
+    List<ShowWatchDTO> getTop12WatchesByStatus();
     List<ShowWatchDTO> searchWatchesByName(String name);
     Boolean createWatch(CreateWatchDTO watchDTO) throws IOException;
     Watch updateStatus(Long id, String newStatus);
     Watch updateWatch(Long id, WatchUpdateRequestDTO updateRequest);
     WatchDTO getWatchById(Long id);
     List<WatchSellerDTO> getWatchesByUserIdAndStatus(Long userId, String status);
-    Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus,String status, Pageable pageable);
+    Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus,String status, String accessories, Pageable pageable);
 }

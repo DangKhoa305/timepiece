@@ -28,9 +28,14 @@ public class WatchController {
         return watchService.getAllWatches();
     }
 
-    @GetMapping("/top12")
-    public List<ShowWatchDTO> getTop12Watches() {
-        return watchService.getTop12Watches();
+//    @GetMapping("/top12")
+//    public List<ShowWatchDTO> getTop12Watches() {
+//        return watchService.getTop12Watches();
+//    }
+
+    @GetMapping("/top12/Approved")
+    public List<ShowWatchDTO> getTop12WatchesApproved() {
+        return watchService.getTop12WatchesByStatus();
     }
 
     @GetMapping("/search")
@@ -87,10 +92,11 @@ public class WatchController {
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String watchStatus,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) String accessories,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return watchService.searchWatches(price, address, type, brand, watchStatus, status, pageable);
+        return watchService.searchWatches(price, address, type, brand, watchStatus, status, accessories, pageable);
     }
 }

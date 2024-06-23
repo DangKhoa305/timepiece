@@ -42,9 +42,14 @@ public class WatchServiceImpl implements WatchService {
         return watchRepository.findAll().stream().map(this::convertToWatchDTO).collect(Collectors.toList());
     }
 
-    @Override
-    public List<ShowWatchDTO> getTop12Watches() {
-        List<Watch> watches = watchRepository.findAll().stream().limit(12).collect(Collectors.toList());
+//    @Override
+//    public List<ShowWatchDTO> getTop12Watches() {
+//        List<Watch> watches = watchRepository.findAll().stream().limit(12).collect(Collectors.toList());
+//        return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
+//    }
+
+    public List<ShowWatchDTO> getTop12WatchesByStatus() {
+        List<Watch> watches = watchRepository.findByStatusOrderByCreateDateDesc("Approved").stream().limit(12).collect(Collectors.toList());
         return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
     }
 
@@ -259,8 +264,8 @@ public class WatchServiceImpl implements WatchService {
     }
 
     @Override
-    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, Pageable pageable) {
-        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus,status, pageable);
+    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus, status, accessories, pageable);
         Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
                 watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
         return searchwatchDTOs;
@@ -273,6 +278,7 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setPrice(watch.getPrice());
         searchWatchDTO.setStatus(watch.getWatchStatus());
         searchWatchDTO.setStatus(watch.getStatus());
+        searchWatchDTO.setAccessories(watch.getAccessories());
 
         return searchWatchDTO;
     }

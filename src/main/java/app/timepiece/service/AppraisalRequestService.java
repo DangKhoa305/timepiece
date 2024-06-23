@@ -5,6 +5,7 @@ import app.timepiece.dto.AppraisalRequestResponseDTO;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface AppraisalRequestService {
@@ -13,4 +14,7 @@ public interface AppraisalRequestService {
     Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatus(String status, Pageable pageable);
     Page<AppraisalRequestListDTO> getAllAppraisalRequests(Pageable pageable);
     Boolean updateStatus(Long id, String newStatus);
+
+    @Transactional
+    Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId);
 }

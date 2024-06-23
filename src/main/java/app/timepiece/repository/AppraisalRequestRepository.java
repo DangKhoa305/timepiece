@@ -14,6 +14,4 @@ import java.util.List;
 public interface AppraisalRequestRepository extends JpaRepository<AppraisalRequest, Long> {
     Page<AppraisalRequest> findAllByStatus(String status, Pageable pageable);
     Page<AppraisalRequest> findAll(Pageable pageable);
-    @Query("SELECT COALESCE(MAX(ar.code), 0) FROM AppraisalRequest ar")
-    Long findMaxCode();
 }

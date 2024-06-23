@@ -5,6 +5,7 @@ import app.timepiece.entity.Account;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.entity.AppraisalRequest;
 import app.timepiece.entity.RequestImage;
+import app.timepiece.entity.User;
 import app.timepiece.repository.*;
 import app.timepiece.service.AppraisalRequestService;
 import app.timepiece.dto.AppraisalRequestDTO;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,6 +30,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AppraisalRequestRepository appraisalRequestRepository;
@@ -65,10 +70,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
 
-        // Lấy mã code lớn nhất hiện tại và tăng thêm 1
-        Long maxCode = appraisalRequestRepository.findMaxCode();
-        Long newCode = maxCode + 1;
-        appraisalRequest.setCode(newCode);
 
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
 
@@ -142,7 +143,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 appraisalRequest.getCreateDate(),
                 appraisalRequest.getBrand(),
                 appraisalRequest.getStatus(),
-                appraisalRequest.getCode(),
                 appraisalRequest.getUpdateDate()
         );
     }
@@ -154,6 +154,32 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
             AppraisalRequest request = optionalRequest.get();
             request.setStatus(newStatus);
             request.setUpdateDate(new Date());
+            appraisalRequestRepository.save(request);
+            return true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "AppraisalRequest with id " + id + " not found");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId) {
+        Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            AppraisalRequest request = optionalRequest.get();
+            request.setStatus(newStatus);
+            request.setUpdateDate(new Date());
+
+            // Assign the appraiser if appraiserId is provided
+            if (appraiserId != null) {
+                Optional<User> optionalAppraiser = userRepository.findById(appraiserId);
+                if (optionalAppraiser.isPresent()) {
+                    User appraiser = optionalAppraiser.get();
+                    request.setAppraiser(appraiser);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + appraiserId + " not found");
+                }
+            }
             appraisalRequestRepository.save(request);
             return true;
         } else {

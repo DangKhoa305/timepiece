@@ -22,12 +22,10 @@ public class ReportDTO {
     private int yearProduced;
     private String watchStatus;
     private String accessories;
-    private String watchGender;
     private String origin;
     private String size;
     private Long userId;
     private String commentValue;
-    private Date createDate;
     private List<MultipartFile> imageFiles;
 
 }

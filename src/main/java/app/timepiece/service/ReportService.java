@@ -13,4 +13,5 @@ public interface ReportService {
     Report createReport(ReportDTO reportDTO);
     ReportResponseDTO getReportById(Long id);
     Page<SearchReportDTO> searchReports(Long id, String brand, String reportStatus, Date createDate, Pageable pageable);
+    Page<SearchReportDTO> searchReportsByUserId(Long userId, Pageable pageable);
 }

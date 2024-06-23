@@ -51,4 +51,14 @@ public class ReportController {
         Pageable pageable = PageRequest.of(page, size);
         return reportService.searchReports(id, brand, reportStatus, createDate, pageable);
     }
+
+    @GetMapping("/search/{userId}")
+    public Page<SearchReportDTO> getReportsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return reportService.searchReportsByUserId(userId, pageable);
+    }
+
 }

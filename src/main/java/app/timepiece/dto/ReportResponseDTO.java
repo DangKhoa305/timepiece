@@ -20,7 +20,6 @@ public class ReportResponseDTO {
     private int yearProduced;
     private String watchStatus;
     private String accessories;
-    private String watchGender;
     private String origin;
     private String size;
     private String userName;

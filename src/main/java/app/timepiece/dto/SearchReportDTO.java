@@ -16,5 +16,4 @@ public class SearchReportDTO {
         private String reportStatus;
         private Date createDate;
 
-        // Getters and setters
     }

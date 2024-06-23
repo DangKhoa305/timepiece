@@ -57,10 +57,14 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
         AppraisalRequest appraisalRequest = new AppraisalRequest();
         appraisalRequest.setUsers(account.getUser());
+        appraisalRequest.setUsername(appraisalRequestDTO.getName());
+        appraisalRequest.setEmail(appraisalRequestDTO.getEmail());
+        appraisalRequest.setPhoneNumber(appraisalRequestDTO.getPhoneNumber());
+        appraisalRequest.setAddress(appraisalRequestDTO.getAddress());
         appraisalRequest.setHasOriginalBox(appraisalRequestDTO.isHasOriginalBox());
         appraisalRequest.setHasPapersOrWarranty(appraisalRequestDTO.isHasPapersOrWarranty());
         appraisalRequest.setHasPurchaseReceipt(appraisalRequestDTO.isHasPurchaseReceipt());
-        appraisalRequest.setArethereanystickers(appraisalRequestDTO.isArethereanystickers());
+        appraisalRequest.setArethereanystickers(appraisalRequestDTO.isAreThereAnyStickers());
         appraisalRequest.setAge(appraisalRequestDTO.getAge());
         appraisalRequest.setDesiredPrice(appraisalRequestDTO.getDesiredPrice());
         appraisalRequest.setDescription(appraisalRequestDTO.getDescription());
@@ -101,9 +105,10 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
         // Create and return the DTO
         return AppraisalRequestResponseDTO.builder()
-                .name(appraisalRequest.getUsers().getName())
-                .email(appraisalRequest.getUsers().getAccount().getEmail())
-                .phoneNumber(appraisalRequest.getUsers().getPhoneNumber())
+                .name(appraisalRequest.getUsername())
+                .email(appraisalRequest.getEmail())
+                .address(appraisalRequest.getAddress())
+                .phoneNumber(appraisalRequest.getPhoneNumber())
                 .hasOriginalBox(appraisalRequest.isHasOriginalBox())
                 .hasPapersOrWarranty(appraisalRequest.isHasPapersOrWarranty())
                 .hasPurchaseReceipt(appraisalRequest.isHasPurchaseReceipt())

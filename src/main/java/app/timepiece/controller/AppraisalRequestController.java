@@ -4,6 +4,7 @@ import app.timepiece.dto.AppraisalRequestDTO;
 import app.timepiece.dto.AppraisalRequestListDTO;
 import app.timepiece.dto.AppraisalRequestResponseDTO;
 import app.timepiece.service.AppraisalRequestService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -22,12 +26,18 @@ public class AppraisalRequestController {
     private AppraisalRequestService appraisalRequestService;
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createAppraisalRequest(@ModelAttribute AppraisalRequestDTO appraisalRequestDTO) {
+    public ResponseEntity<?> createAppraisalRequest( @Valid @ModelAttribute AppraisalRequestDTO appraisalRequestDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining("\n"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+        }
         try {
             appraisalRequestService.createAppraisalRequest(appraisalRequestDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Request successfully ");
-        } catch (Error e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.getMessage());
         }
     }
 

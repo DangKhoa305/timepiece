@@ -48,9 +48,6 @@ public class Report {
     private String accessories;
 
     @Column(nullable = true)
-    private String watchGender;
-
-    @Column(nullable = true)
     private String origin;
 
     @Column(nullable = false)

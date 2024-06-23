@@ -53,7 +53,6 @@ public class ReportServiceImpl implements ReportService {
         report.setWatchStatus(reportDTO.getWatchStatus());
         report.setReportStatus("true");
         report.setAccessories(reportDTO.getAccessories());
-        report.setWatchGender(reportDTO.getWatchGender());
         report.setOrigin(reportDTO.getOrigin());
         report.setSize(reportDTO.getSize());
         report.setCreateDate(new Date());
@@ -99,7 +98,6 @@ public class ReportServiceImpl implements ReportService {
                 .yearProduced(report.getYearProduced())
                 .watchStatus(report.getWatchStatus())
                 .accessories(report.getAccessories())
-                .watchGender(report.getWatchGender())
                 .origin(report.getOrigin())
                 .size(report.getSize())
                 .createDate(report.getCreateDate())
@@ -129,5 +127,11 @@ public class ReportServiceImpl implements ReportService {
         dto.setReportStatus(report.getReportStatus());
         dto.setCreateDate(report.getCreateDate());
         return dto;
+    }
+
+    @Override
+    public Page<SearchReportDTO> searchReportsByUserId(Long userId, Pageable pageable) {
+        Page<Report> reports = reportRepository.searchReportByUserId(userId, pageable);
+        return reports.map(this::convertToDTO);
     }
 }

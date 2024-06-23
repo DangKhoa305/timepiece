@@ -19,7 +19,6 @@ public class AppraisalRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long code;
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;
@@ -44,5 +43,8 @@ public class AppraisalRequest {
     @JoinColumn(name = "user_id", nullable = false)
     private User users;
 
+    @ManyToOne
+    @JoinColumn(name = "appraiser_id")
+    private User appraiser;
     // Getters and setters
 }

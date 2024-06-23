@@ -60,4 +60,18 @@ public class AppraisalRequestController {
         appraisalRequestService.updateStatus(id, newStatus);
         return ResponseEntity.ok("Status updated successfully");
     }
+
+    @PutMapping("/{id}/updateStatus")
+    public ResponseEntity<String> updateStatusAndAppraiser(
+            @PathVariable Long id,
+            @RequestParam String newStatus,
+            @RequestParam(required = false) Long appraiserId) {
+
+        Boolean updated = appraisalRequestService.updateStatusAndAppraiser(id, newStatus, appraiserId);
+        if (updated) {
+            return ResponseEntity.ok("AppraisalRequest updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

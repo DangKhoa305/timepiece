@@ -13,6 +13,7 @@ import java.util.List;
 public interface WatchRepository extends JpaRepository<Watch, Long> {
     List<Watch> findByNameContainingIgnoreCase(String name);
     List<Watch> findByUserIdAndStatus(Long userId, String status);
+    List<Watch> findByStatusOrderByCreateDateDesc(String status);
 
     @Query("SELECT w FROM Watch w " +
             "WHERE (:price IS NULL OR w.price = :price) " +
@@ -20,7 +21,8 @@ public interface WatchRepository extends JpaRepository<Watch, Long> {
             "AND (:type IS NULL OR w.watchType.typeName = :type) " +
             "AND (:brand IS NULL OR w.brand.brandName = :brand) " +
             "AND (:watchStatus IS NULL OR w.watchStatus = :watchStatus)" +
-            "AND (:status IS NULL OR w.status = :status)")
+            "AND (:status IS NULL OR w.status = :status) " +
+            "AND (:accessories IS NULL OR w.accessories = :accessories)") // Added this line
     Page<Watch> searchWatches(
             @Param("price") Double price,
             @Param("address") String address,
@@ -28,6 +30,7 @@ public interface WatchRepository extends JpaRepository<Watch, Long> {
             @Param("brand") String brand,
             @Param("watchStatus") String watchStatus,
             @Param("status") String status,
+            @Param("accessories") String accessories,  // Added this line
             Pageable pageable
     );
 

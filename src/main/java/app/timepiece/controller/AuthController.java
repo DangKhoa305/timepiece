@@ -55,12 +55,18 @@ public class AuthController {
                 throw new UsernameNotFoundException("User not found with email: " + email);
             }
             User user = userOptional.get();
+
+            if (!user.getStatus().equalsIgnoreCase("true")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Account is banned"));
+            }
+
             String jwt = jwtTokenProvider.generateToken(user.getId());
             JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, user.getName(), user.getRole().getRoleName());
             return ResponseEntity.ok(response);
 
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid email or password"));
+
         }
     }
 

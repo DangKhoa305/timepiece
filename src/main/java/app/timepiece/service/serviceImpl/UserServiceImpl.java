@@ -170,7 +170,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
+    @Override
+    @Transactional
+    public Boolean updateUserStatus(Long userId, String status) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setStatus(status);
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
 

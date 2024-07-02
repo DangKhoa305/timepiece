@@ -13,5 +13,5 @@ public interface UserService {
     String findEmailByUserId(Long userId);
     UserDTO getUserById(Long id);
     UserDTO updateUserById(Long id, UpdateUserDTO updateUserDTO);
-
+    Boolean updateUserStatus(Long userId, String status);
 }

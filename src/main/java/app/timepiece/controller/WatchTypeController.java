@@ -1,8 +1,11 @@
 package app.timepiece.controller;
 
+import app.timepiece.dto.BrandDTO;
 import app.timepiece.dto.WatchTypeDTO;
 import app.timepiece.entity.WatchType;
 import app.timepiece.service.WatchTypeService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +27,7 @@ public class WatchTypeController {
     }
 
     @PostMapping("/createWatchType")
-    public ResponseEntity<?> createWatchType(@RequestParam String typeName) {
+    public ResponseEntity<?> createWatchType(@Valid @RequestParam @NotBlank(message = "type Name is required") String typeName) {
         Optional<WatchType> watchType = watchTypeService.createWatchType(typeName);
         if (watchType.isPresent()) {
             return new ResponseEntity<>(watchType.get(), HttpStatus.CREATED);
@@ -34,7 +37,12 @@ public class WatchTypeController {
     }
 
     @PutMapping("/{id}/updateWatchType")
-    public WatchTypeDTO updateWatchTypeName(@PathVariable Long id, @RequestBody String typeName) {
-        return watchTypeService.updateWatchTypeName(id, typeName);
+    public ResponseEntity<?> updateWatchTypeName(@PathVariable Long id,@Valid @RequestBody @NotBlank(message = "Brand name is required") String typeName) {
+        try {
+        WatchTypeDTO updateWatch = watchTypeService.updateWatchTypeName(id, typeName);
+            return ResponseEntity.ok(updateWatch);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

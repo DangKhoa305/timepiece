@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/searchWatch").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/top12/Approved").permitAll()
+                        .requestMatchers("/api/brands/**").permitAll()
                         .anyRequest().authenticated() // Tất cả các yêu cầu khác cần phải xác thực
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

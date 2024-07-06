@@ -264,8 +264,16 @@ public class WatchServiceImpl implements WatchService {
     }
 
     @Override
-    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, Pageable pageable) {
-        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus, status, accessories, pageable);
+    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus, status, accessories, name, pageable);
+        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
+                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
+        return searchwatchDTOs;
+    }
+
+    @Override
+    public Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchWatchesByKeyword(keyword, pageable);
         Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
                 watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
         return searchwatchDTOs;

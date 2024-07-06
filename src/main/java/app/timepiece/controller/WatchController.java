@@ -38,10 +38,10 @@ public class WatchController {
         return watchService.getTop12WatchesByStatus();
     }
 
-    @GetMapping("/search")
-    public List<ShowWatchDTO> searchWatchesByName(@RequestParam String name) {
-        return watchService.searchWatchesByName(name);
-    }
+//    @GetMapping("/search")
+//    public List<ShowWatchDTO> searchWatchesByName(@RequestParam String name) {
+//        return watchService.searchWatchesByName(name);
+//    }
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<String> createWatch(@ModelAttribute CreateWatchDTO watchDTO) {
@@ -93,10 +93,21 @@ public class WatchController {
             @RequestParam(required = false) String watchStatus,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String accessories,
+            @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return watchService.searchWatches(price, address, type, brand, watchStatus, status, accessories, pageable);
+        return watchService.searchWatches(price, address, type, brand, watchStatus, status, accessories, name , pageable);
+    }
+
+    @GetMapping("/searchWatchByKeyword")
+    public Page<SearchWatchDTO> searchWatches(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return watchService.searchWatchesByKeyword(keyword, pageable);
     }
 }

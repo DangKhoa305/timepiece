@@ -50,5 +50,8 @@ public class AppraisalRequest {
     @ManyToOne
     @JoinColumn(name = "appraiser_id")
     private User appraiser;
-    // Getters and setters
+
+    @OneToOne(mappedBy = "appraisalRequest")
+    private Report report;
+
 }

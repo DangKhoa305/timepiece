@@ -65,4 +65,8 @@ public class Report {
 
     @Column(nullable = false)
     private String reportStatus;
+
+    @OneToOne
+    @JoinColumn(name = "appraisal_request_id", referencedColumnName = "id")
+    private AppraisalRequest appraisalRequest;
 }

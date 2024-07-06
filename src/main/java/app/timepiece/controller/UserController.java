@@ -1,5 +1,7 @@
 package app.timepiece.controller;
 
+import app.timepiece.dto.CreateUserDTO;
+import app.timepiece.dto.RegistrationRequestDTO;
 import app.timepiece.dto.UpdateUserDTO;
 import app.timepiece.dto.UserDTO;
 import app.timepiece.entity.User;
@@ -62,5 +64,22 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + userId);
         }
     }
+
+    @PostMapping("/admin/createUser")
+    public ResponseEntity<?> createUserbyAdmin(@Valid @RequestBody CreateUserDTO createUser, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining("\n"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+        }
+        try {
+            userService.CreateUserByAdmin(createUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }

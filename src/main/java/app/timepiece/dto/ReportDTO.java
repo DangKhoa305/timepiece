@@ -27,5 +27,6 @@ public class ReportDTO {
     private Long userId;
     private String commentValue;
     private List<MultipartFile> imageFiles;
+    private Long appraisalRequestId;
 
 }

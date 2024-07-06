@@ -1,5 +1,6 @@
 package app.timepiece.service;
 
+import app.timepiece.dto.CreateUserDTO;
 import app.timepiece.dto.RegistrationRequestDTO;
 import app.timepiece.dto.UpdateUserDTO;
 import app.timepiece.dto.UserDTO;
@@ -14,4 +15,5 @@ public interface UserService {
     UserDTO getUserById(Long id);
     UserDTO updateUserById(Long id, UpdateUserDTO updateUserDTO);
     Boolean updateUserStatus(Long userId, String status);
+    Optional<User> CreateUserByAdmin(CreateUserDTO createUser);
 }

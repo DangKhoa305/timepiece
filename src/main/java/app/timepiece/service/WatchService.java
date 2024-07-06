@@ -18,5 +18,6 @@ public interface WatchService {
     Watch updateWatch(Long id, WatchUpdateRequestDTO updateRequest);
     WatchDTO getWatchById(Long id);
     List<WatchSellerDTO> getWatchesByUserIdAndStatus(Long userId, String status);
-    Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus,String status, String accessories, Pageable pageable);
+    Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable);
+    Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable);
 }

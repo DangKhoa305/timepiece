@@ -75,4 +75,11 @@ public class WalletController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PaymentDTO(status, "Failed", null));
         }
     }
+
+    @GetMapping("/user/{userId}/balance")
+    public ResponseEntity<Double> getBalanceByUserId(@PathVariable Long userId) {
+        return walletService.getBalanceByUserId(userId)
+                .map(balance -> new ResponseEntity<>(balance, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

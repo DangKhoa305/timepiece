@@ -42,4 +42,8 @@ public class WalletServiceImpl implements WalletService {
     public Optional<Wallet> getWalletByUserId(Long userId) {
         return walletRepository.findByUserId(userId);
     }
+
+    public Optional<Double> getBalanceByUserId(Long userId) {
+        return walletRepository.findByUserId(userId).map(Wallet::getBalance);
+    }
 }

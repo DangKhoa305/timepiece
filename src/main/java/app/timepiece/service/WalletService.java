@@ -11,4 +11,6 @@ public interface WalletService {
     boolean withdrawFromWallet(Long walletId, Double amount);
 
     Optional<Wallet> getWalletByUserId(Long userId);
+
+    Optional<Double> getBalanceByUserId(Long userId);
 }

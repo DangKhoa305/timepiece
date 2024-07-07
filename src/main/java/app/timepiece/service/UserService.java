@@ -1,9 +1,6 @@
 package app.timepiece.service;
 
-import app.timepiece.dto.CreateUserDTO;
-import app.timepiece.dto.RegistrationRequestDTO;
-import app.timepiece.dto.UpdateUserDTO;
-import app.timepiece.dto.UserDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.User;
 
 import java.util.Optional;
@@ -16,4 +13,5 @@ public interface UserService {
     UserDTO updateUserById(Long id, UpdateUserDTO updateUserDTO);
     Boolean updateUserStatus(Long userId, String status);
     Optional<User> CreateUserByAdmin(CreateUserDTO createUser);
+    void changePassword(PasswordChangeDTO passwordChangeDTO) throws Exception;
 }

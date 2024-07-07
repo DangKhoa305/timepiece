@@ -1,9 +1,6 @@
 package app.timepiece.controller;
 
-import app.timepiece.dto.CreateUserDTO;
-import app.timepiece.dto.RegistrationRequestDTO;
-import app.timepiece.dto.UpdateUserDTO;
-import app.timepiece.dto.UserDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.User;
 import app.timepiece.service.UserService;
 import jakarta.validation.Valid;
@@ -81,5 +78,14 @@ public class UserController {
         }
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO) {
+        try {
+            userService.changePassword(passwordChangeDTO);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
 
 }

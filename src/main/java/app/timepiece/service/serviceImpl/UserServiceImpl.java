@@ -1,9 +1,6 @@
 package app.timepiece.service.serviceImpl;
 
-import app.timepiece.dto.CreateUserDTO;
-import app.timepiece.dto.RegistrationRequestDTO;
-import app.timepiece.dto.UpdateUserDTO;
-import app.timepiece.dto.UserDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.Account;
 import app.timepiece.entity.Role;
 import app.timepiece.entity.User;
@@ -13,6 +10,7 @@ import app.timepiece.repository.UserRepository;
 import app.timepiece.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -215,5 +216,23 @@ public class UserServiceImpl implements UserService {
         accountRepository.save(account);
 
         return Optional.of(user);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(PasswordChangeDTO passwordChangeDTO) throws Exception {
+        User user = userRepository.findById(passwordChangeDTO.getUserId())
+                .orElseThrow(() -> new Exception("User not found"));
+
+        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), user.getAccount().getPassword())) {
+            throw new Exception("Old password is incorrect");
+        }
+
+        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmNewPassword())) {
+            throw new Exception("New password and confirm new password do not match");
+        }
+
+        user.getAccount().setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        userRepository.save(user);
     }
 }

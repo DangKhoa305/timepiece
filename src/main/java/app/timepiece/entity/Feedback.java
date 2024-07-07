@@ -17,8 +17,7 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
-    private int rating;
+
     private String timestamp;
 
     @ManyToOne

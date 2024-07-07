@@ -70,7 +70,10 @@ public class Watch {
     private String address;
 
     private Date createDate;
+
     private Date updateDate;
+
+    private Date vipEndDate;
 
     @ManyToOne
     @JoinColumn(name = "watch_type_id", nullable = false)

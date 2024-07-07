@@ -4,9 +4,11 @@ import app.timepiece.dto.*;
 import app.timepiece.entity.Account;
 import app.timepiece.entity.Role;
 import app.timepiece.entity.User;
+import app.timepiece.entity.Wallet;
 import app.timepiece.repository.AccountRepository;
 import app.timepiece.repository.RoleRepository;
 import app.timepiece.repository.UserRepository;
+import app.timepiece.repository.WalletRepository;
 import app.timepiece.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private WalletRepository walletRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -78,6 +83,12 @@ public class UserServiceImpl implements UserService {
 
         // Sau đó lưu tài khoản
         accountRepository.save(account);
+
+        // Tạo ví mới cho người dùng
+        Wallet wallet = new Wallet();
+        wallet.setUser(user);
+        wallet.setBalance(0.0);
+        walletRepository.save(wallet);
 
         return Optional.of(user);
     }

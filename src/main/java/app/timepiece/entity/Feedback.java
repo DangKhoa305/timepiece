@@ -18,6 +18,7 @@ public class Feedback {
     private Long id;
 
     private String comment;
+
     private String timestamp;
 
     @ManyToOne
@@ -31,4 +32,5 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    // Getters and setters
 }

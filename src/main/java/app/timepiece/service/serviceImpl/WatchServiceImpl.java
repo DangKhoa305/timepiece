@@ -3,6 +3,7 @@ package app.timepiece.service.serviceImpl;
 import app.timepiece.dto.*;
 import app.timepiece.entity.*;
 import app.timepiece.repository.*;
+import app.timepiece.service.WalletService;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,9 @@ public class WatchServiceImpl implements WatchService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private WalletService walletService;
 
 
     @Override
@@ -289,6 +293,60 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setAccessories(watch.getAccessories());
 
         return searchWatchDTO;
+    }
+
+    @Transactional
+    public WatchDTO makeWatchVip(Long id, int vipDays, Long userId, double vipFee) {
+        Watch watch = watchRepository.findById(id).orElseThrow(() -> new RuntimeException("Watch not found"));
+
+        // Lấy thông tin người dùng từ UserService
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Lấy wallet của người dùng từ thông tin user
+        Wallet wallet = user.getWallet();
+
+        // Kiểm tra và trừ tiền từ ví
+        boolean withdrawSuccess = walletService.withdrawFromWallet(wallet.getId(), vipFee);
+        if (!withdrawSuccess) {
+            throw new RuntimeException("Withdrawal from wallet failed");
+        }
+
+        watch.setStatus("VIP");
+        watch.setVipEndDate(calculateVipEndDate(vipDays));
+        Watch savedWatch = watchRepository.save(watch);
+
+        // Tạo đối tượng WatchDTO từ savedWatch
+        WatchDTO watchDTO = WatchDTO.builder()
+                .id(savedWatch.getId())
+                .userId(user.getId())
+                .name(savedWatch.getName())
+                .watchStatus(savedWatch.getWatchStatus())
+                .status(savedWatch.getStatus())
+                .description(savedWatch.getDescription())
+                .price(savedWatch.getPrice())
+                .brandName(savedWatch.getBrand().getBrandName()) // Thay vì savedWatch.getBrandName() nếu Brand là một entity
+                .yearProduced(savedWatch.getYearProduced())
+                .model(savedWatch.getModel())
+                .material(savedWatch.getMaterial())
+                .watchStrap(savedWatch.getWatchStrap())
+                .size(savedWatch.getSize())
+                .accessories(savedWatch.getAccessories())
+                .referenceCode(savedWatch.getReferenceCode())
+                .placeOfProduction(savedWatch.getPlaceOfProduction())
+                .address(savedWatch.getAddress())
+                .createDate(savedWatch.getCreateDate())
+                .updateDate(savedWatch.getUpdateDate())
+                .watchTypeName(savedWatch.getWatchType().getTypeName()) // Thay vì savedWatch.getWatchTypeName() nếu WatchType là một entity
+                .build();
+
+        return watchDTO;
+    }
+
+
+    private Date calculateVipEndDate(int vipDays) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, vipDays);
+        return calendar.getTime();
     }
 
 }

@@ -110,4 +110,18 @@ public class WatchController {
         Pageable pageable = PageRequest.of(page, size);
         return watchService.searchWatchesByKeyword(keyword, pageable);
     }
+
+    @PutMapping("/{watchid}/vip")
+    public ResponseEntity<?> makeWatchVip(
+            @PathVariable Long watchid,
+            @RequestParam int vipDays,
+            @RequestParam Long userId,
+            @RequestParam double vipFee) {
+        try {
+            WatchDTO updatedWatchDTO = watchService.makeWatchVip(watchid, vipDays, userId, vipFee);
+            return ResponseEntity.ok(updatedWatchDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

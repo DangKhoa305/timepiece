@@ -65,7 +65,7 @@ public class ReportServiceImpl implements ReportService {
         report.setSize(reportDTO.getSize());
         report.setCreateDate(new Date());
         report.setCommentValue(reportDTO.getCommentValue());
-     //   report.setAppraisalRequest(appraisalRequest);
+        report.setAppraisalRequest(appraisalRequest);
 
         Report savedReport = reportRepository.save(report);
 

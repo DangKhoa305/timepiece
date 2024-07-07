@@ -25,5 +25,12 @@ public class Feedback {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Feedback parentFeedback;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     // Getters and setters
 }

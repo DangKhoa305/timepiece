@@ -3,9 +3,11 @@ package app.timepiece.service.serviceImpl;
 import app.timepiece.dto.ReportDTO;
 import app.timepiece.dto.ReportResponseDTO;
 import app.timepiece.dto.SearchReportDTO;
+import app.timepiece.entity.AppraisalRequest;
 import app.timepiece.entity.Report;
 import app.timepiece.entity.ReportImage;
 import app.timepiece.entity.User;
+import app.timepiece.repository.AppraisalRequestRepository;
 import app.timepiece.repository.ReportImageRepository;
 import app.timepiece.repository.ReportRepository;
 import app.timepiece.repository.UserRepository;
@@ -36,10 +38,16 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private AppraisalRequestRepository appraisalRequestRepository;
+
     @Override
     public Report createReport(ReportDTO reportDTO) {
         User user = userRepository.findById(reportDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(reportDTO.getAppraisalRequestId())
+                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
 
         Report report = new Report();
         report.setUser(user);
@@ -57,6 +65,7 @@ public class ReportServiceImpl implements ReportService {
         report.setSize(reportDTO.getSize());
         report.setCreateDate(new Date());
         report.setCommentValue(reportDTO.getCommentValue());
+        report.setAppraisalRequest(appraisalRequest);
 
         Report savedReport = reportRepository.save(report);
 
@@ -69,12 +78,13 @@ public class ReportServiceImpl implements ReportService {
                 reportImage.setImageUrl(uploadedImageUrl);
                 reportImageRepository.save(reportImage);
             } catch (Exception e) {
-                throw new Error(e) ;
+                throw new Error(e);
             }
         }
 
         return savedReport;
     }
+
 
     @Override
     public ReportResponseDTO getReportById(Long id) {

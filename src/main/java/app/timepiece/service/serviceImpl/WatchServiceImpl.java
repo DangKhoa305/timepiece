@@ -116,7 +116,7 @@ public class WatchServiceImpl implements WatchService {
         watch.setReferenceCode(watchDTO.getReferenceCode());
         watch.setPlaceOfProduction(watchDTO.getPlaceOfProduction());
         watch.setWatchType(watchType);
-        watch.setStatus("wait");
+        watch.setStatus("Approved");
         watch.setAddress(watchDTO.getAddress());
         watch.setCreateDate(new Date());
         watch.setUpdateDate(new Date());

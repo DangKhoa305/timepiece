@@ -1,5 +1,6 @@
 package app.timepiece.service.serviceImpl;
 
+import app.timepiece.dto.CreateUserDTO;
 import app.timepiece.dto.RegistrationRequestDTO;
 import app.timepiece.dto.UpdateUserDTO;
 import app.timepiece.dto.UserDTO;
@@ -39,7 +40,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
-
 
     @Transactional
     @Override
@@ -128,7 +128,6 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-
     @Override
     public UserDTO updateUserById(Long id, UpdateUserDTO updateUserDTO) {
         Optional<User> userOptional = userRepository.findById(id);
@@ -142,7 +141,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     private void updateUserEntity(User user, UpdateUserDTO updateUserDTO) {
         if (updateUserDTO.getName() != null) {
             user.setName(updateUserDTO.getName());
@@ -154,7 +152,6 @@ public class UserServiceImpl implements UserService {
             String avatarUrl = uploadImage(updateUserDTO.getAvatar());
             user.setAvatar(avatarUrl);
         }
-
         if (updateUserDTO.getPhoneNumber() != null) {
             user.setPhoneNumber(updateUserDTO.getPhoneNumber());
         }
@@ -171,7 +168,6 @@ public class UserServiceImpl implements UserService {
             user.setCitizenID(updateUserDTO.getCitizenID());
         }
     }
-
 
     private String uploadImage(MultipartFile imageFile) {
         try {
@@ -195,9 +191,40 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
+    @Override
+    @Transactional
+    public Optional<User> CreateUserByAdmin(CreateUserDTO createUser) {
+        if (accountRepository.existsByEmail(createUser.getEmail())) {
+            throw new IllegalArgumentException("Email is already registered");
+        }
 
+        if (!createUser.getPassword().equals(createUser.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
 
+        Account account = new Account();
+        account.setEmail(createUser.getEmail());
+        account.setPassword(new BCryptPasswordEncoder().encode(createUser.getPassword()));
 
+        User user = User.builder()
+                .name(createUser.getName())
+                .avatar(createUser.getAvatar())
+                .phoneNumber(createUser.getPhoneNumber())
+                .dateCreate(new Date())
+                .gender(createUser.getGender())
+                .birthday(createUser.getBirthday())
+                .account(account)
+                .build();
+
+        Role defaultRole = roleRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("Default role not found"));
+        user.setRole(defaultRole);
+
+        account.setUser(user);
+
+        userRepository.save(user);
+        accountRepository.save(account);
+
+        return Optional.of(user);
+    }
 }
-
-

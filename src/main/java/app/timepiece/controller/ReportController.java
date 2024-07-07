@@ -4,6 +4,7 @@ import app.timepiece.dto.ReportDTO;
 import app.timepiece.dto.ReportResponseDTO;
 import app.timepiece.dto.SearchReportDTO;
 import app.timepiece.service.ReportService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,9 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -25,7 +28,13 @@ public class ReportController {
 
     @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createReport(@ModelAttribute ReportDTO reportDTO) {
+    public ResponseEntity<String> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining("\n"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+        }
         try {
             reportService.createReport(reportDTO);
             return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Report successfully ");

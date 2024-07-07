@@ -46,5 +46,8 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Report> reports;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Wallet wallet;
+
     // Getters and setters
 }

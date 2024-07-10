@@ -61,7 +61,7 @@ public class AuthController {
             }
 
             String jwt = jwtTokenProvider.generateToken(user.getId());
-            JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, user.getName(), user.getRole().getRoleName());
+            JwtAuthenticationResponse response = new JwtAuthenticationResponse(jwt, user.getName(), user.getId() ,user.getRole().getRoleName());
             return ResponseEntity.ok(response);
 
         } catch (AuthenticationException e) {

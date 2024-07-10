@@ -53,6 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/watches/searchWatchByKeyword").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/searchWatch").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/top12/Approved").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/watches/getAll").permitAll()
+
                         .requestMatchers("/api/brands/**").permitAll()
                         .requestMatchers("/api/watch-types/**").permitAll()
                         .anyRequest().authenticated() // Tất cả các yêu cầu khác cần phải xác thực

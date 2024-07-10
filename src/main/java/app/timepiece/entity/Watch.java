@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Watch")
@@ -79,4 +80,7 @@ public class Watch {
     @JoinColumn(name = "watch_type_id", nullable = false)
     @ToString.Exclude
     private WatchType watchType;
+
+    @OneToMany(mappedBy = "watch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WatchImage> images;
 }

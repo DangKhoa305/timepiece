@@ -307,6 +307,10 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setStatus(watch.getWatchStatus());
         searchWatchDTO.setStatus(watch.getStatus());
         searchWatchDTO.setAccessories(watch.getAccessories());
+        List<WatchImage> images = watch.getImages();
+        if (images != null && !images.isEmpty()) {
+            searchWatchDTO.setImageUrl(images.get(0).getImageUrl());
+        }
 
         return searchWatchDTO;
     }

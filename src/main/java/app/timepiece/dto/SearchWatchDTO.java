@@ -15,6 +15,7 @@ public class SearchWatchDTO {
     private String watchImage;
     private String accessories;
     private String status;
+    private String imageUrl;
 
 
 }

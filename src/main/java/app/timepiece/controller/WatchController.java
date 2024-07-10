@@ -1,7 +1,6 @@
 package app.timepiece.controller;
 
 import app.timepiece.dto.*;
-import app.timepiece.entity.Watch;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -102,7 +101,7 @@ public class WatchController {
     }
 
     @GetMapping("/searchWatchByKeyword")
-    public Page<SearchWatchDTO> searchWatches(
+    public Page<SearchWatchDTO> searchWatchesByKeyword(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

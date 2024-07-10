@@ -216,7 +216,23 @@ public class WatchServiceImpl implements WatchService {
         Optional<Watch> watchOptional = watchRepository.findById(id);
         if (watchOptional.isPresent()) {
             Watch watch = watchOptional.get();
-            return convertToDTO(watch);
+            WatchDTO watchDTO = convertToDTO(watch);
+
+            User user = watch.getUser();
+            if (user != null) {
+                watchDTO.setUserId(user.getId());
+                watchDTO.setUserName(user.getName());
+                watchDTO.setUserAvatar(user.getAvatar());
+                watchDTO.setUserPhoneNumber(user.getPhoneNumber());
+            }
+
+            List<WatchImage> watchImages = watchImageRepository.findByWatchId(watch.getId());
+            List<String> imageUrls = watchImages.stream()
+                    .map(WatchImage::getImageUrl)
+                    .collect(Collectors.toList());
+            watchDTO.setWatchImages(imageUrls);
+
+            return watchDTO;
         } else {
             throw new RuntimeException("Watch not found with id: " + id);
         }

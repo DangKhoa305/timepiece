@@ -13,6 +13,9 @@ import java.util.List;
 public class WatchDTO {
     private long id;
     private Long userId;
+    private String userName;
+    private String userAvatar;
+    private String userPhoneNumber;
     private String name;
     private String watchStatus;
     private String status;
@@ -31,5 +34,5 @@ public class WatchDTO {
     private Date createDate;
     private Date updateDate;
     private String watchTypeName;
+    private List<String> watchImages;
 }
-

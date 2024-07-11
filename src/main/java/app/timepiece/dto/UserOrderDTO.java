@@ -3,6 +3,7 @@ package app.timepiece.dto;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class UserOrderDTO {
     private double totalPrice;
     private String status;
     private String watchName;
+    private List<String> watchImages;
 }

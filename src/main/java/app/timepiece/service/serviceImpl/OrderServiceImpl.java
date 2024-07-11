@@ -6,6 +6,7 @@ import app.timepiece.dto.UserOrderDTO;
 import app.timepiece.entity.Order;
 import app.timepiece.entity.User;
 import app.timepiece.entity.Watch;
+import app.timepiece.entity.WatchImage;
 import app.timepiece.repository.OrderRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.repository.WatchRepository;
@@ -72,6 +73,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDTO convertToOrderDTO(Order order) {
+        List<String> watchImages = order.getWatch().getImages().stream()
+                .map(WatchImage::getImageUrl)
+                .collect(Collectors.toList());
+
         return OrderDTO.builder()
                 .id(order.getId())
                 .note(order.getNote())
@@ -80,6 +85,7 @@ public class OrderServiceImpl implements OrderService {
                 .userId(order.getUser().getId())
                 .watchName(order.getWatch().getName())
                 .status(order.getStatus())
+                .watchImages(watchImages)
                 .build();
     }
 
@@ -92,6 +98,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private UserOrderDTO convertToUserOrderDTO(Order order) {
+        List<String> watchImages = order.getWatch().getImages().stream()
+                .map(WatchImage::getImageUrl)
+                .collect(Collectors.toList());
+
         return UserOrderDTO.builder()
                 .id(order.getId())
                 .note(order.getNote())
@@ -99,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus())
                 .watchName(order.getWatch().getName())
+                .watchImages(watchImages)
                 .build();
     }
 

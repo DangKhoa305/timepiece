@@ -273,8 +273,13 @@ public class WatchServiceImpl implements WatchService {
     }
 
     private WatchSellerDTO convertToSellerDTO(Watch watch) {
+        String imageUrl = watch.getImages().stream()
+                .map(WatchImage::getImageUrl)
+                .findFirst()  // Lấy URL của ảnh đầu tiên
+                .orElse(null);
+
         WatchSellerDTO watchDTO = new WatchSellerDTO();
-        watchDTO.getImageUrl();
+        watchDTO.setImageUrl(imageUrl);
         watchDTO.setName(watch.getName());
         watchDTO.setSize(watch.getSize());
         watchDTO.setPrice(watch.getPrice());

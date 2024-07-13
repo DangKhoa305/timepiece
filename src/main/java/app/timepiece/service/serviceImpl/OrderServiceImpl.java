@@ -3,6 +3,7 @@ package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.OrderDTO;
 import app.timepiece.dto.UserOrderDTO;
+import app.timepiece.dto.WatchDTO;
 import app.timepiece.entity.Order;
 import app.timepiece.entity.User;
 import app.timepiece.entity.Watch;
@@ -14,6 +15,7 @@ import app.timepiece.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.WatchService;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WatchServiceImpl watchService;
 
     @Override
     public Order createOrder(Long watchId, Long userId) {
@@ -65,14 +70,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderById(Long orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
+
         if (!orderOptional.isPresent()) {
             return null;
         }
         Order order = orderOptional.get();
-        return convertToOrderDTO(order);
+        WatchDTO watch = watchService.getWatchById(order.getWatch().getId());
+
+        return convertToOrderDTO(order,watch.getUserId());
     }
 
-    private OrderDTO convertToOrderDTO(Order order) {
+    private OrderDTO convertToOrderDTO(Order order , Long sellerId ) {
         List<String> watchImages = order.getWatch().getImages().stream()
                 .map(WatchImage::getImageUrl)
                 .collect(Collectors.toList());
@@ -86,15 +94,24 @@ public class OrderServiceImpl implements OrderService {
                 .watchName(order.getWatch().getName())
                 .status(order.getStatus())
                 .watchImages(watchImages)
+                .sellerId(sellerId)
                 .build();
     }
 
     @Override
-    public List<UserOrderDTO> getOrdersByUserId(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+    public List<UserOrderDTO> getOrdersByBuyerId(Long buyerId) {
+        List<Order> orders = orderRepository.findByUserId(buyerId);
         return orders.stream()
                 .map(this::convertToUserOrderDTO)
                 .collect(Collectors.toList());
+    }
+
+    public List<UserOrderDTO> getOrdersBySellerId(Long sellerId) {
+        List<Order> orders = orderRepository.findOrdersBySellerId(sellerId);
+        return orders.stream()
+                .map(this::convertToUserOrderDTO)
+                .collect(Collectors.toList());
+
     }
 
     private UserOrderDTO convertToUserOrderDTO(Order order) {
@@ -123,6 +140,6 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         order.setUpdateDate(new Date());
         Order updatedOrder = orderRepository.save(order);
-        return convertToOrderDTO(updatedOrder);
+        return getOrderById(updatedOrder.getId());
     }
 }

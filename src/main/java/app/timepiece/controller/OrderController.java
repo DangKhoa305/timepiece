@@ -37,9 +37,18 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UserOrderDTO>> getOrdersByUserId(@PathVariable Long userId) {
-        List<UserOrderDTO> orders = orderService.getOrdersByUserId(userId);
+    @GetMapping("/buyer/{userId}")
+    public ResponseEntity<List<UserOrderDTO>> getOrdersByBuyerId(@PathVariable Long userId) {
+        List<UserOrderDTO> orders = orderService.getOrdersByBuyerId(userId);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @GetMapping("/seller/{userId}")
+    public ResponseEntity<List<UserOrderDTO>> getOrdersBySellerId(@PathVariable Long userId) {
+        List<UserOrderDTO> orders = orderService.getOrdersBySellerId(userId);
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

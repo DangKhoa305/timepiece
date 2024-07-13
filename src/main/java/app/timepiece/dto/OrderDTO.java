@@ -19,4 +19,5 @@ public class OrderDTO {
     private String watchName;
     private String status;
     private List<String> watchImages;
+    private Long sellerId;
 }

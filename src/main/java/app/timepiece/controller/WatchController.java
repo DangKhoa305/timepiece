@@ -2,15 +2,18 @@ package app.timepiece.controller;
 
 import app.timepiece.dto.*;
 import app.timepiece.service.WatchService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @CrossOrigin
@@ -43,7 +46,13 @@ public class WatchController {
 //    }
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createWatch(@ModelAttribute CreateWatchDTO watchDTO) {
+    public ResponseEntity<String> createWatch(@Valid @ModelAttribute CreateWatchDTO watchDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining("\n"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+        }
         try {
             Boolean isCreated = watchService.createWatch(watchDTO);
             if (isCreated) {

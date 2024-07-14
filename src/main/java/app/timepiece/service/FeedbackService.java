@@ -13,5 +13,5 @@ public interface FeedbackService {
     void deleteFeedback(Long id);
     FeedbackDTO createFeedback(CreateFeedbackDTO createFeedbackDTO);
     List<FeedbackDTO> getFeedbackByOrderId(Long orderId);
-
+    List<FeedbackDTO> getFeedbackByWatchId(Long watchId);
 }

@@ -129,4 +129,37 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .filter(feedbackDTO -> feedbackDTO.getParentFeedbackId() == null)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<FeedbackDTO> getFeedbackByWatchId(Long watchId) {
+        List<Feedback> feedbackList = feedbackRepository.findFeedbacksByWatchId(watchId);
+        Map<Long, FeedbackDTO> feedbackMap = new HashMap<>();
+
+        feedbackList.forEach(feedback -> {
+            FeedbackDTO feedbackDTO = FeedbackDTO.builder()
+                    .id(feedback.getId())
+                    .comment(feedback.getComment())
+                    .timestamp(feedback.getTimestamp())
+                    .orderId(feedback.getOrder().getId())
+                    .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
+                    .build();
+            feedbackMap.put(feedback.getId(), feedbackDTO);
+        });
+
+        feedbackMap.values().forEach(feedbackDTO -> {
+            if (feedbackDTO.getParentFeedbackId() != null) {
+                FeedbackDTO parentDTO = feedbackMap.get(feedbackDTO.getParentFeedbackId());
+                if (parentDTO != null) {
+                    if (parentDTO.getChildFeedbacks() == null) {
+                        parentDTO.setChildFeedbacks(new ArrayList<>());
+                    }
+                    parentDTO.getChildFeedbacks().add(feedbackDTO);
+                }
+            }
+        });
+
+        return feedbackMap.values().stream()
+                .filter(feedbackDTO -> feedbackDTO.getParentFeedbackId() == null)
+                .collect(Collectors.toList());
+    }
 }

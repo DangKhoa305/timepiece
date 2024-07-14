@@ -60,4 +60,14 @@ public class FeedbackController {
         }
     }
 
+    @GetMapping("/watch/{watchId}")
+    public ResponseEntity<List<FeedbackDTO>> getFeedbackByWatchId(@PathVariable Long watchId) {
+        try {
+            List<FeedbackDTO> feedbackList = feedbackService.getFeedbackByWatchId(watchId);
+            return ResponseEntity.ok(feedbackList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

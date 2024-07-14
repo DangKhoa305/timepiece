@@ -64,4 +64,7 @@ public class CreateWatchDTO {
 
     @NotEmpty(message = "Image files cannot be empty")
     private List<MultipartFile> imageFiles;
+
+    @NotBlank(message = "Area cannot be blank")
+    private String area;
 }

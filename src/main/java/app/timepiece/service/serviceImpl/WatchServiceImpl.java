@@ -124,6 +124,7 @@ public class WatchServiceImpl implements WatchService {
         watch.setAddress(watchDTO.getAddress());
         watch.setCreateDate(new Date());
         watch.setUpdateDate(new Date());
+        watch.setArea(watchDTO.getArea());
 
         Watch savedWatch = watchRepository.save(watch);
 
@@ -174,6 +175,7 @@ public class WatchServiceImpl implements WatchService {
             watch.setAddress(updateRequest.getAddress());
             watch.setStatus("wait");
             watch.setUpdateDate(new Date());
+            watch.setArea(updateRequest.getArea());
 
             // Update Brand if provided
             if (updateRequest.getBrandId() != null) {
@@ -288,17 +290,27 @@ public class WatchServiceImpl implements WatchService {
         return watchDTO;
     }
 
-    @Override
-    public Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable) {
-        Page<Watch> watches = watchRepository.searchWatches(price, address, type, brand, watchStatus, status, accessories, name, pageable);
-        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
-                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
-        return searchwatchDTOs;
-    }
+//    @Override
+//    public Page<SearchWatchDTO> searchWatches(Double price, String area, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable) {
+//        Page<Watch> watches = watchRepository.searchWatches(price, area, type, brand, watchStatus, status, accessories, name, pageable);
+//        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
+//                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
+//        return searchwatchDTOs;
+//    }
+//
+//    @Override
+//    public Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable) {
+//        Page<Watch> watches = watchRepository.searchWatchesByKeyword(keyword, pageable);
+//        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
+//                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
+//        return searchwatchDTOs;
+//    }
 
     @Override
-    public Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable) {
-        Page<Watch> watches = watchRepository.searchWatchesByKeyword(keyword, pageable);
+    public Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, String area,
+                                                                String type, String brand, String watchStatus, String status,
+                                                                String accessories, String name, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchByKeywordAndFilter(keyword, minPrice, maxPrice, area, type, brand, watchStatus, status, accessories, name, pageable);
         Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
                 watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
         return searchwatchDTOs;
@@ -312,6 +324,7 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setStatus(watch.getWatchStatus());
         searchWatchDTO.setStatus(watch.getStatus());
         searchWatchDTO.setAccessories(watch.getAccessories());
+        searchWatchDTO.setArea(watch.getArea());
         List<WatchImage> images = watch.getImages();
         if (images != null && !images.isEmpty()) {
             searchWatchDTO.setImageUrl(images.get(0).getImageUrl());

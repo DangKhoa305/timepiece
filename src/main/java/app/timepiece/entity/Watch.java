@@ -76,6 +76,8 @@ public class Watch {
 
     private Date vipEndDate;
 
+    private String area;
+
     @ManyToOne
     @JoinColumn(name = "watch_type_id", nullable = false)
     @ToString.Exclude

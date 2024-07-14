@@ -50,8 +50,9 @@ public class SecurityConfig {
                 .authorizeRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatchByKeyword").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatch").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatchByKeyword").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatchByKeywordAndFilter").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/watches/searchWatch").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/top12/Approved").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/getAll").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/watches/{id}/getWatchById").permitAll()

@@ -37,6 +37,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .id(feedback.getId())
                     .comment(feedback.getComment())
                     .timestamp(feedback.getTimestamp())
+                    .rating(feedback.getRating())
                     .userName(feedback.getUser() != null ? feedback.getUser().getName() : null)
                     .orderId(feedback.getOrder() != null ? feedback.getOrder().getId() : null)
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
@@ -69,6 +70,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         Feedback feedback = new Feedback();
         feedback.setComment(createFeedbackDTO.getComment());
         feedback.setTimestamp(Instant.now().toString());
+        feedback.setRating(createFeedbackDTO.getRating());
 
         Optional<Order> orderOptional = orderRepository.findById(createFeedbackDTO.getOrderId());
         if (orderOptional.isPresent()) {
@@ -92,6 +94,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                 .id(savedFeedback.getId())
                 .comment(savedFeedback.getComment())
                 .timestamp(savedFeedback.getTimestamp())
+                .rating(savedFeedback.getRating())
                 .orderId(savedFeedback.getOrder().getId())
                 .parentFeedbackId(savedFeedback.getParentFeedback() != null ? savedFeedback.getParentFeedback().getId() : null)
                 .build();
@@ -106,6 +109,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             FeedbackDTO feedbackDTO = FeedbackDTO.builder()
                     .id(feedback.getId())
                     .comment(feedback.getComment())
+                    .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
@@ -139,6 +143,7 @@ public class FeedbackServiceImpl implements FeedbackService {
             FeedbackDTO feedbackDTO = FeedbackDTO.builder()
                     .id(feedback.getId())
                     .comment(feedback.getComment())
+                    .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)

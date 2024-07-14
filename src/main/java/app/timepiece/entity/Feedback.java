@@ -21,6 +21,7 @@ public class Feedback {
 
     private String timestamp;
 
+    private Double rating;
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;

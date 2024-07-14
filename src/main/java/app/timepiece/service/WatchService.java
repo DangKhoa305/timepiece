@@ -18,7 +18,10 @@ public interface WatchService {
     Watch updateWatch(Long id, WatchUpdateRequestDTO updateRequest);
     WatchDTO getWatchById(Long id);
     List<WatchSellerDTO> getWatchesByUserIdAndStatus(Long userId, String status);
-    Page<SearchWatchDTO> searchWatches(Double price, String address, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable);
-    Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable);
+    //Page<SearchWatchDTO> searchWatches(Double price, String area, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable);
+    //Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable);
     WatchDTO makeWatchVip(Long id, int vipDays, Long userId, double vipFee);
+    Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, String area,
+                                                         String type, String brand, String watchStatus, String status,
+                                                         String accessories, String name, Pageable pageable);
 }

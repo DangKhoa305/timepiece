@@ -98,10 +98,40 @@ public class WatchController {
         return ResponseEntity.ok(watches);
     }
 
-    @GetMapping("/searchWatch")
-    public Page<SearchWatchDTO> searchWatches(
-            @RequestParam(required = false) Double price,
-            @RequestParam(required = false) String address,
+//    @GetMapping("/searchWatch")
+//    public Page<SearchWatchDTO> searchWatches(
+//            @RequestParam(required = false) Double price,
+//            @RequestParam(required = false) String area,
+//            @RequestParam(required = false) String type,
+//            @RequestParam(required = false) String brand,
+//            @RequestParam(required = false) String watchStatus,
+//            @RequestParam(required = false) String status,
+//            @RequestParam(required = false) String accessories,
+//            @RequestParam(required = false) String name,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//        return watchService.searchWatches(price, area, type, brand, watchStatus, status, accessories, name , pageable);
+//    }
+//
+//    @GetMapping("/searchWatchByKeyword")
+//    public Page<SearchWatchDTO> searchWatchesByKeyword(
+//            @RequestParam(required = false) String keyword,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//
+//        Pageable pageable = PageRequest.of(page, size);
+//        return watchService.searchWatchesByKeyword(keyword, pageable);
+//    }
+
+
+    @GetMapping("/searchWatchByKeywordAndFilter")
+    public Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String area,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String watchStatus,
@@ -112,17 +142,8 @@ public class WatchController {
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return watchService.searchWatches(price, address, type, brand, watchStatus, status, accessories, name , pageable);
-    }
-
-    @GetMapping("/searchWatchByKeyword")
-    public Page<SearchWatchDTO> searchWatchesByKeyword(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        return watchService.searchWatchesByKeyword(keyword, pageable);
+        return watchService.searchWatchesByKeywordAndFilter(keyword, minPrice, maxPrice, area, type, brand, watchStatus,
+                status, accessories, name, pageable);
     }
 
     @PutMapping("/{watchid}/vip")

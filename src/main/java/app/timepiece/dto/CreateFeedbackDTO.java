@@ -12,4 +12,5 @@ public class CreateFeedbackDTO {
     private String comment;
     private Long orderId;
     private Long parentFeedbackId;
+    private Double rating;
 }

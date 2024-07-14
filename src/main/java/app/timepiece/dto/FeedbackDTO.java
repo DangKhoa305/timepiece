@@ -13,6 +13,7 @@ public class FeedbackDTO {
     private String comment;
     private String timestamp;
     private String userName;
+    private Double rating;
     private Long orderId;
     private Long parentFeedbackId;
     private List<FeedbackDTO> childFeedbacks;

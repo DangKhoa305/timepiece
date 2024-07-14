@@ -124,6 +124,7 @@ public class WatchServiceImpl implements WatchService {
         watch.setAddress(watchDTO.getAddress());
         watch.setCreateDate(new Date());
         watch.setUpdateDate(new Date());
+        watch.setArea(watchDTO.getArea());
 
         Watch savedWatch = watchRepository.save(watch);
 
@@ -174,6 +175,7 @@ public class WatchServiceImpl implements WatchService {
             watch.setAddress(updateRequest.getAddress());
             watch.setStatus("wait");
             watch.setUpdateDate(new Date());
+            watch.setArea(updateRequest.getArea());
 
             // Update Brand if provided
             if (updateRequest.getBrandId() != null) {

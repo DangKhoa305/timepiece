@@ -74,7 +74,13 @@ public class WatchController {
     @PutMapping(value = "/{watchId}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> updateWatch(
             @PathVariable Long watchId,
-            @ModelAttribute WatchUpdateRequestDTO updateRequest) {
+            @Valid @ModelAttribute WatchUpdateRequestDTO updateRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining("\n"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+        }
        watchService.updateWatch(watchId, updateRequest);
         return ResponseEntity.ok("Watch updated successfully");
     }

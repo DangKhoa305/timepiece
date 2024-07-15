@@ -4,12 +4,15 @@ import app.timepiece.dto.CreateFeedbackDTO;
 import app.timepiece.dto.FeedbackDTO;
 import app.timepiece.entity.Feedback;
 import app.timepiece.entity.Order;
+import app.timepiece.entity.User;
 import app.timepiece.repository.FeedbackRepository;
 import app.timepiece.repository.OrderRepository;
+import app.timepiece.repository.UserRepository;
 import app.timepiece.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,6 +25,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<Feedback> getAllFeedbacks() {
@@ -72,32 +77,63 @@ public class FeedbackServiceImpl implements FeedbackService {
         feedback.setTimestamp(Instant.now().toString());
         feedback.setRating(createFeedbackDTO.getRating());
 
+        Optional<User> userOptional = userRepository.findById(createFeedbackDTO.getUserId());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            feedback.setUser(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
+
+
         Optional<Order> orderOptional = orderRepository.findById(createFeedbackDTO.getOrderId());
         if (orderOptional.isPresent()) {
-            feedback.setOrder(orderOptional.get());
-        } else {
-            throw new RuntimeException("Order not found");
-        }
+            Order order = orderOptional.get();
+            feedback.setOrder(order);
 
-        if (createFeedbackDTO.getParentFeedbackId() != null) {
-            Optional<Feedback> parentFeedbackOptional = feedbackRepository.findById(createFeedbackDTO.getParentFeedbackId());
-            if (parentFeedbackOptional.isPresent()) {
-                feedback.setParentFeedback(parentFeedbackOptional.get());
-            } else {
-                throw new RuntimeException("Parent feedback not found");
+            // Check if parentFeedbackId is null
+            if (createFeedbackDTO.getParentFeedbackId() == null) {
+                // Calculate new ratingScore for the seller
+                User seller = order.getWatch().getUser();
+                double currentRatingScore = seller.getRatingScore() != null ? seller.getRatingScore() : 0.0;
+                long numberOfFeedbacks = countFeedbackBySeller(seller.getId());
+                double newRatingScore;
+                if (numberOfFeedbacks == 0) {
+                    newRatingScore = createFeedbackDTO.getRating();
+                } else {
+                    newRatingScore = (currentRatingScore * numberOfFeedbacks + createFeedbackDTO.getRating()) / (numberOfFeedbacks + 1);
+                }
+                // Update seller's ratingScore
+                seller.setRatingScore(newRatingScore);
             }
-        }
+            } else {
+                throw new RuntimeException("Order not found");
+            }
 
-        Feedback savedFeedback = feedbackRepository.save(feedback);
+            if (createFeedbackDTO.getParentFeedbackId() != null) {
+                Optional<Feedback> parentFeedbackOptional = feedbackRepository.findById(createFeedbackDTO.getParentFeedbackId());
+                if (parentFeedbackOptional.isPresent()) {
+                    feedback.setParentFeedback(parentFeedbackOptional.get());
+                } else {
+                    throw new RuntimeException("Parent feedback not found");
+                }
+            }
 
-        return FeedbackDTO.builder()
-                .id(savedFeedback.getId())
-                .comment(savedFeedback.getComment())
-                .timestamp(savedFeedback.getTimestamp())
-                .rating(savedFeedback.getRating())
-                .orderId(savedFeedback.getOrder().getId())
-                .parentFeedbackId(savedFeedback.getParentFeedback() != null ? savedFeedback.getParentFeedback().getId() : null)
-                .build();
+            Feedback savedFeedback = feedbackRepository.save(feedback);
+
+            return FeedbackDTO.builder()
+                    .id(savedFeedback.getId())
+                    .comment(savedFeedback.getComment())
+                    .timestamp(savedFeedback.getTimestamp())
+                    .rating(savedFeedback.getRating())
+                    .orderId(savedFeedback.getOrder().getId())
+                    .parentFeedbackId(savedFeedback.getParentFeedback() != null ? savedFeedback.getParentFeedback().getId() : null)
+                    .build();
+
+    }
+
+    public Long countFeedbackBySeller(Long sellerId) {
+        return feedbackRepository.countBySellerId(sellerId);
     }
 
     @Override

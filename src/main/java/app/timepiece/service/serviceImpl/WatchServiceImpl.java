@@ -226,6 +226,7 @@ public class WatchServiceImpl implements WatchService {
                 watchDTO.setUserName(user.getName());
                 watchDTO.setUserAvatar(user.getAvatar());
                 watchDTO.setUserPhoneNumber(user.getPhoneNumber());
+                watchDTO.setUserRatingScore(user.getRatingScore());
             }
 
             List<WatchImage> watchImages = watchImageRepository.findByWatchId(watch.getId());

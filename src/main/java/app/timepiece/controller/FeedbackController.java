@@ -19,12 +19,12 @@ public class FeedbackController {
     private FeedbackService feedbackService;
 
     @PostMapping("CreateFeedback")
-    public ResponseEntity<FeedbackDTO> createFeedback(@RequestBody CreateFeedbackDTO createFeedbackDTO) {
+    public ResponseEntity<?> createFeedback(@RequestBody CreateFeedbackDTO createFeedbackDTO) {
         try {
             FeedbackDTO savedFeedback = feedbackService.createFeedback(createFeedbackDTO);
             return ResponseEntity.ok(savedFeedback);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

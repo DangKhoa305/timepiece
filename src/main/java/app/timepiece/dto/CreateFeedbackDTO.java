@@ -11,6 +11,7 @@ import lombok.*;
 public class CreateFeedbackDTO {
     private String comment;
     private Long orderId;
+    private Long userId;
     private Long parentFeedbackId;
     private Double rating;
 }

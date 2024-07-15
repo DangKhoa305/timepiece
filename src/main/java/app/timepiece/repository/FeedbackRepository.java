@@ -16,4 +16,9 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
             "FROM Feedback f " +
             "WHERE f.order.watch.id = :watchId")
     List<Feedback> findFeedbacksByWatchId(@Param("watchId") Long watchId);
+
+    @Query("SELECT COUNT(f) FROM Feedback f WHERE f.order.watch.user.id = :sellerId AND f.parentFeedback IS NULL")
+    Long countBySellerId(@Param("sellerId") Long sellerId);
+
+   // List<Feedback> findByOrder_Watch_Seller_Id(Long sellerId);
 }

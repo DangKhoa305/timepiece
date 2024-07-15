@@ -26,6 +26,7 @@ public class User {
     private String gender;
     private String birthday;
     private String citizenID;
+    private Double ratingScore;
 
     @OneToOne
     @JoinColumn(name = "account_id")

@@ -16,6 +16,7 @@ public class WatchDTO {
     private String userName;
     private String userAvatar;
     private String userPhoneNumber;
+    private Double userRatingScore;
     private String name;
     private String watchStatus;
     private String status;

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Date;
 import java.util.Optional;
@@ -32,8 +33,9 @@ public class PaymentController {
     public ResponseEntity<PaymentDTO> pay(  @RequestParam("amount") Integer amount,
                                             @RequestParam(value = "bankCode", required = false) String bankCode,
                                             @RequestParam("userId") Long userId,
-                                            @RequestParam("orderId") Long orderId) {
-        PaymentDTO paymentDTO = paymentService.createVnPayPayment(amount, bankCode, userId, orderId);
+                                            @RequestParam("orderId") Long orderId,
+                                            @RequestParam String returnUrl ) {
+        PaymentDTO paymentDTO = paymentService.createVnPayPayment(amount, bankCode, userId, orderId ,returnUrl);
         return ResponseEntity.status(HttpStatus.OK).body(paymentDTO);
     }
 

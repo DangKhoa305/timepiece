@@ -31,8 +31,9 @@ public class WalletController {
     @GetMapping("/vn-pay")
     public ResponseEntity<PaymentDTO> pay(@RequestParam("amount") Integer amount,
                                           @RequestParam(value = "bankCode", required = false) String bankCode,
-                                          @RequestParam("userId") Long userId) {
-        PaymentDTO paymentDTO = paymentService.createVnPayWallet(amount, bankCode, userId );
+                                          @RequestParam("userId") Long userId,
+                                          @RequestParam String returnUrl) {
+        PaymentDTO paymentDTO = paymentService.createVnPayWallet(amount, bankCode, userId ,returnUrl);
         return ResponseEntity.status(HttpStatus.OK).body(paymentDTO);
     }
 

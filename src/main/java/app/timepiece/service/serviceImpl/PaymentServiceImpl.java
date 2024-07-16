@@ -30,11 +30,11 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
-    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId) {
+    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId , String url) {
         long amountInCents = amount * 100L;
 
 
-        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig(url);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amountInCents));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
@@ -74,12 +74,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
 
-   // @Override
-    public PaymentDTO createVnPayWallet(long amount, String bankCode, Long userId) {
+    @Override
+    public PaymentDTO createVnPayWallet(long amount, String bankCode, Long userId, String url) {
         long amountInCents = amount * 100L;
 
 
-        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig2();
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig(url);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amountInCents));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);

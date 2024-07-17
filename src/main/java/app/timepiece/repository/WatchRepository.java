@@ -73,4 +73,5 @@ public interface WatchRepository extends JpaRepository<Watch, Long> {
                                          @Param("name") String name,
                                          Pageable pageable);
 
+    List<Watch> findByUserId(Long userId);
 }

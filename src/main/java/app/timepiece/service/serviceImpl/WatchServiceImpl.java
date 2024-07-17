@@ -300,6 +300,15 @@ public class WatchServiceImpl implements WatchService {
         return watchDTO;
     }
 
+    @Override
+    public List<WatchSellerDTO> getWatchesByUserId(Long userId) {
+        List<Watch> watches = watchRepository.findByUserId(userId);
+        return watches.stream()
+                .map(this::convertToSellerDTO)
+                .collect(Collectors.toList());
+    }
+
+
 //    @Override
 //    public Page<SearchWatchDTO> searchWatches(Double price, String area, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable) {
 //        Page<Watch> watches = watchRepository.searchWatches(price, area, type, brand, watchStatus, status, accessories, name, pageable);

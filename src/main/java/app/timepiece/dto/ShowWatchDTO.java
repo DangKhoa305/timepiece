@@ -13,5 +13,9 @@ public class ShowWatchDTO {
     private double price;
     private String status;
     private String imageUrl;
+    private Long userId;
+    private String userName;
+    private String userAvatar;
+    private Double userRatingScore;
 
 }

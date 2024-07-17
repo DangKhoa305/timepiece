@@ -22,7 +22,6 @@ public class CreateWatchDTO {
     @NotBlank(message = "Watch status cannot be blank")
     private String watchStatus;
 
-    @NotBlank(message = "Description cannot be blank")
     private String description;
 
     @Positive(message = "Price must be positive")

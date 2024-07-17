@@ -79,6 +79,11 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setAccessories(watch.getAccessories());
         watchDTO.setReferenceCode(watch.getReferenceCode());
         watchDTO.setWatchTypeName(watch.getWatchType().getTypeName());
+        watchDTO.setUserId(watch.getUser().getId());
+        watchDTO.setUserName(watch.getUser().getName());
+        watchDTO.setUserAvatar(watch.getUser().getAvatar());
+        watchDTO.setUserPhoneNumber(watch.getUser().getPhoneNumber());
+        watchDTO.setUserRatingScore(watch.getUser().getRatingScore());
         return watchDTO;
     }
 
@@ -90,7 +95,11 @@ public class WatchServiceImpl implements WatchService {
                 watch.getName(),
                 watch.getPrice(),
                 watch.getStatus(),
-                imageUrl
+                imageUrl,
+                watch.getUser().getId(),
+                watch.getUser().getName(),
+                watch.getUser().getAvatar(),
+                watch.getUser().getRatingScore()
         );
     }
 
@@ -326,6 +335,9 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setStatus(watch.getStatus());
         searchWatchDTO.setAccessories(watch.getAccessories());
         searchWatchDTO.setArea(watch.getArea());
+        searchWatchDTO.setSellerId(watch.getUser().getId());
+        searchWatchDTO.setSellerName(watch.getUser().getName());
+        searchWatchDTO.setSellerImage(watch.getUser().getAvatar());
         List<WatchImage> images = watch.getImages();
         if (images != null && !images.isEmpty()) {
             searchWatchDTO.setImageUrl(images.get(0).getImageUrl());

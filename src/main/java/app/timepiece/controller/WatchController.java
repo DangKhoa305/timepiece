@@ -98,6 +98,12 @@ public class WatchController {
         return ResponseEntity.ok(watches);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<WatchSellerDTO>> getWatchesByUserId(@PathVariable Long userId) {
+        List<WatchSellerDTO> watches = watchService.getWatchesByUserId(userId);
+        return ResponseEntity.ok(watches);
+    }
+
 //    @GetMapping("/searchWatch")
 //    public Page<SearchWatchDTO> searchWatches(
 //            @RequestParam(required = false) Double price,

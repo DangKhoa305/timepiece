@@ -24,4 +24,5 @@ public interface WatchService {
     Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, String area,
                                                          String type, String brand, String watchStatus, String status,
                                                          String accessories, String name, Pageable pageable);
+    List<WatchSellerDTO> getWatchesByUserId(Long userId);
 }

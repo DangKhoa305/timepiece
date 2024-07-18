@@ -1,9 +1,7 @@
 package app.timepiece.service.serviceImpl;
 
 
-import app.timepiece.dto.OrderDTO;
-import app.timepiece.dto.UserOrderDTO;
-import app.timepiece.dto.WatchDTO;
+import app.timepiece.dto.*;
 import app.timepiece.entity.Order;
 import app.timepiece.entity.User;
 import app.timepiece.entity.Watch;
@@ -119,14 +117,52 @@ public class OrderServiceImpl implements OrderService {
                 .map(WatchImage::getImageUrl)
                 .collect(Collectors.toList());
 
+        WatchSellerDTO watchSellerDTO = WatchSellerDTO.builder()
+                .imageUrl(watchImages.isEmpty() ? null : watchImages.get(0)) // Chọn hình ảnh đầu tiên hoặc null nếu không có hình ảnh
+                .name(order.getWatch().getName())
+                .size(order.getWatch().getSize())
+                .price(order.getWatch().getPrice())
+                .createDate(order.getWatch().getCreateDate())
+                .address(order.getWatch().getAddress())
+                .build();
+
+        UserDTO sellerDTO = UserDTO.builder()
+                .id(order.getWatch().getUser().getId())
+                .name(order.getWatch().getUser().getName())
+                .address(order.getWatch().getUser().getAddress())
+                .avatar(order.getWatch().getUser().getAvatar())
+                .phoneNumber(order.getWatch().getUser().getPhoneNumber())
+                .status(order.getWatch().getUser().getStatus())
+                .dateCreate(order.getWatch().getUser().getDateCreate())
+                .gender(order.getWatch().getUser().getGender())
+                .birthday(order.getWatch().getUser().getBirthday())
+                .citizenID(order.getWatch().getUser().getCitizenID())
+                .build();
+
+        UserDTO buyerDTO = UserDTO.builder()
+                .id(order.getUser().getId())
+                .name(order.getUser().getName())
+                .address(order.getUser().getAddress())
+                .avatar(order.getUser().getAvatar())
+                .phoneNumber(order.getUser().getPhoneNumber())
+                .status(order.getUser().getStatus())
+                .dateCreate(order.getUser().getDateCreate())
+                .gender(order.getUser().getGender())
+                .birthday(order.getUser().getBirthday())
+                .citizenID(order.getUser().getCitizenID())
+                .build();
+
         return UserOrderDTO.builder()
                 .id(order.getId())
                 .note(order.getNote())
                 .orderDate(order.getOrderDate())
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus())
-                .watchName(order.getWatch().getName())
-                .watchImages(watchImages)
+                //.watchName(order.getWatch().getName())
+                //.watchImages(watchImages)
+                .watch(watchSellerDTO)
+                .seller(sellerDTO)
+                .buyer(buyerDTO)
                 .build();
     }
 

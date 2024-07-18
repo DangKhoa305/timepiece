@@ -16,6 +16,9 @@ public class UserOrderDTO {
     private Date orderDate;
     private double totalPrice;
     private String status;
-    private String watchName;
-    private List<String> watchImages;
+    //private String watchName;
+  //  private List<String> watchImages;
+    private WatchSellerDTO watch;
+    private UserDTO seller;
+    private UserDTO buyer;
 }

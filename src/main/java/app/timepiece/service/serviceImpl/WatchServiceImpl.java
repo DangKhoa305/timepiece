@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,9 @@ public class WatchServiceImpl implements WatchService {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private RenewalPackageRepostory renewalPackageRepository;
 
 
     @Override
@@ -129,7 +134,7 @@ public class WatchServiceImpl implements WatchService {
         watch.setReferenceCode(watchDTO.getReferenceCode());
         watch.setPlaceOfProduction(watchDTO.getPlaceOfProduction());
         watch.setWatchType(watchType);
-        watch.setStatus("Approved");
+        watch.setStatus("SHOW");
         watch.setAddress(watchDTO.getAddress());
         watch.setCreateDate(new Date());
         watch.setUpdateDate(new Date());
@@ -182,7 +187,6 @@ public class WatchServiceImpl implements WatchService {
             watch.setReferenceCode(updateRequest.getReferenceCode());
             watch.setPlaceOfProduction(updateRequest.getPlaceOfProduction());
             watch.setAddress(updateRequest.getAddress());
-            watch.setStatus("wait");
             watch.setUpdateDate(new Date());
             watch.setArea(updateRequest.getArea());
 
@@ -193,26 +197,26 @@ public class WatchServiceImpl implements WatchService {
             }
 
             if (updateRequest.getImageFiles() != null && !updateRequest.getImageFiles().isEmpty()) {
-            // Delete current images associated with the watch
-            watchImageRepository.deleteByWatch(watch);
+                // Delete current images associated with the watch
+                watchImageRepository.deleteByWatch(watch);
 
-            // Save new images
-            List<WatchImage> newImages = new ArrayList<>();
-            for (MultipartFile imageFile : updateRequest.getImageFiles()) {
-                try {
-                    Map<String, Object> uploadResult = cloudinaryService.uploadFile(imageFile);
-                    String uploadedImageUrl = uploadResult.get("url").toString();
-                    WatchImage newImage = new WatchImage();
-                    newImage.setWatch(watch);
-                    newImage.setImageUrl(uploadedImageUrl);
-                    newImages.add(newImage);
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to upload image", e);
+                // Save new images
+                List<WatchImage> newImages = new ArrayList<>();
+                for (MultipartFile imageFile : updateRequest.getImageFiles()) {
+                    try {
+                        Map<String, Object> uploadResult = cloudinaryService.uploadFile(imageFile);
+                        String uploadedImageUrl = uploadResult.get("url").toString();
+                        WatchImage newImage = new WatchImage();
+                        newImage.setWatch(watch);
+                        newImage.setImageUrl(uploadedImageUrl);
+                        newImages.add(newImage);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to upload image", e);
+                    }
                 }
-            }
 
-            // Save all new images
-            watchImageRepository.saveAll(newImages);
+                // Save all new images
+                watchImageRepository.saveAll(newImages);
             }
             // Save the updated watch entity
             return watchRepository.save(watch);
@@ -278,7 +282,12 @@ public class WatchServiceImpl implements WatchService {
 
     @Override
     public List<WatchSellerDTO> getWatchesByUserIdAndStatus(Long userId, String status) {
-        List<Watch> watches = watchRepository.findByUserIdAndStatus(userId, status);
+        List<Watch> watches;
+        if (status == null) {
+            watches = watchRepository.findByUserId(userId);
+        } else {
+            watches = watchRepository.findByUserIdAndStatus(userId, status);
+        }
         return watches.stream()
                 .map(this::convertToSellerDTO)
                 .collect(Collectors.toList());
@@ -287,7 +296,7 @@ public class WatchServiceImpl implements WatchService {
     private WatchSellerDTO convertToSellerDTO(Watch watch) {
         String imageUrl = watch.getImages().stream()
                 .map(WatchImage::getImageUrl)
-                .findFirst()  // Lấy URL của ảnh đầu tiên
+                .findFirst()
                 .orElse(null);
 
         WatchSellerDTO watchDTO = new WatchSellerDTO();
@@ -297,6 +306,12 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setPrice(watch.getPrice());
         watchDTO.setCreateDate(watch.getCreateDate());
         watchDTO.setAddress(watch.getAddress());
+        watchDTO.setStatus(watch.getStatus());
+        watchDTO.setStartDate(watch.getStartDate());
+        watchDTO.setEndDate(watch.getEndDate());
+        watchDTO.setNumberDatePost(watch.getNumberDatePost());
+        watchDTO.setTypePost(watch.getTypePost());
+
         return watchDTO;
     }
 
@@ -355,52 +370,109 @@ public class WatchServiceImpl implements WatchService {
         return searchWatchDTO;
     }
 
+//    @Transactional
+//    public WatchDTO makeWatchVip(Long id, int vipDays, Long userId, double vipFee) {
+//        Watch watch = watchRepository.findById(id).orElseThrow(() -> new RuntimeException("Watch not found"));
+//
+//        // Lấy thông tin người dùng từ UserService
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Lấy wallet của người dùng từ thông tin user
+//        Wallet wallet = user.getWallet();
+//
+//        // Kiểm tra và trừ tiền từ ví
+//        boolean withdrawSuccess = walletService.withdrawFromWallet(wallet.getId(), vipFee);
+//        if (!withdrawSuccess) {
+//            throw new RuntimeException("Withdrawal from wallet failed");
+//        }
+//
+//
+//        watch.setEndDate(calculateVipEndDate(vipDays));
+//        Watch savedWatch = watchRepository.save(watch);
+//
+//        // Tạo đối tượng WatchDTO từ savedWatch
+//        WatchDTO watchDTO = WatchDTO.builder()
+//                .id(savedWatch.getId())
+//                .userId(user.getId())
+//                .name(savedWatch.getName())
+//                .watchStatus(savedWatch.getWatchStatus())
+//                .status(savedWatch.getStatus())
+//                .description(savedWatch.getDescription())
+//                .price(savedWatch.getPrice())
+//                .brandName(savedWatch.getBrand().getBrandName()) // Thay vì savedWatch.getBrandName() nếu Brand là một entity
+//                .yearProduced(savedWatch.getYearProduced())
+//                .model(savedWatch.getModel())
+//                .material(savedWatch.getMaterial())
+//                .watchStrap(savedWatch.getWatchStrap())
+//                .size(savedWatch.getSize())
+//                .accessories(savedWatch.getAccessories())
+//                .referenceCode(savedWatch.getReferenceCode())
+//                .placeOfProduction(savedWatch.getPlaceOfProduction())
+//                .address(savedWatch.getAddress())
+//                .createDate(savedWatch.getCreateDate())
+//                .updateDate(savedWatch.getUpdateDate())
+//                .watchTypeName(savedWatch.getWatchType().getTypeName()) // Thay vì savedWatch.getWatchTypeName() nếu WatchType là một entity
+//                .build();
+//
+//        return watchDTO;
+//    }
+
+
     @Transactional
-    public WatchDTO makeWatchVip(Long id, int vipDays, Long userId, double vipFee) {
-        Watch watch = watchRepository.findById(id).orElseThrow(() -> new RuntimeException("Watch not found"));
+    public RenewalPackageDTO renewWatch(Long watchId, Long renewalPackageId, String typePost) {
+        Watch watch = watchRepository.findById(watchId)
+                .orElseThrow(() -> new RuntimeException("Watch not found"));
 
-        // Lấy thông tin người dùng từ UserService
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        RenewalPackage renewalPackage = renewalPackageRepository.findById(renewalPackageId)
+                .orElseThrow(() -> new RuntimeException("Renewal package not found"));
 
-        // Lấy wallet của người dùng từ thông tin user
-        Wallet wallet = user.getWallet();
+        LocalDateTime now = LocalDateTime.now();
+         LocalDateTime newEndTime;
 
-        // Kiểm tra và trừ tiền từ ví
-        boolean withdrawSuccess = walletService.withdrawFromWallet(wallet.getId(), vipFee);
-        if (!withdrawSuccess) {
-            throw new RuntimeException("Withdrawal from wallet failed");
+        Date watchEndDate = watch.getEndDate();
+        if (watchEndDate == null || watchEndDate.toInstant().isBefore(now.atZone(ZoneId.systemDefault()).toInstant())) {
+            newEndTime = now.plusDays(renewalPackage.getDuration());
+        } else {
+            newEndTime = watchEndDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(renewalPackage.getDuration());
         }
 
-        watch.setStatus("VIP");
-        watch.setVipEndDate(calculateVipEndDate(vipDays));
-        Watch savedWatch = watchRepository.save(watch);
+        watch.setStartDate(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()));
+        watch.setEndDate(Date.from(newEndTime.atZone(ZoneId.systemDefault()).toInstant()));
+        watch.setTypePost(typePost);
+        watch.setPrice(renewalPackage.getPrice());
+        watch.setStatus("ACTIVE");
 
-        // Tạo đối tượng WatchDTO từ savedWatch
-        WatchDTO watchDTO = WatchDTO.builder()
-                .id(savedWatch.getId())
-                .userId(user.getId())
-                .name(savedWatch.getName())
-                .watchStatus(savedWatch.getWatchStatus())
-                .status(savedWatch.getStatus())
-                .description(savedWatch.getDescription())
-                .price(savedWatch.getPrice())
-                .brandName(savedWatch.getBrand().getBrandName()) // Thay vì savedWatch.getBrandName() nếu Brand là một entity
-                .yearProduced(savedWatch.getYearProduced())
-                .model(savedWatch.getModel())
-                .material(savedWatch.getMaterial())
-                .watchStrap(savedWatch.getWatchStrap())
-                .size(savedWatch.getSize())
-                .accessories(savedWatch.getAccessories())
-                .referenceCode(savedWatch.getReferenceCode())
-                .placeOfProduction(savedWatch.getPlaceOfProduction())
-                .address(savedWatch.getAddress())
-                .createDate(savedWatch.getCreateDate())
-                .updateDate(savedWatch.getUpdateDate())
-                .watchTypeName(savedWatch.getWatchType().getTypeName()) // Thay vì savedWatch.getWatchTypeName() nếu WatchType là một entity
-                .build();
+        watch = watchRepository.save(watch);
 
-        return watchDTO;
+
+        RenewalPackageDTO renewalPackageDTO = convertToRenewalPackageDTO(watch);
+        renewalPackageDTO.setTotalPrice(renewalPackage.getPrice());
+
+        return renewalPackageDTO;
     }
+
+    private RenewalPackageDTO convertToRenewalPackageDTO(Watch watch) {
+        String imageUrl = watch.getImages().stream()
+                .map(WatchImage::getImageUrl)
+                .findFirst()
+                .orElse(null);
+
+        RenewalPackageDTO renewalPackageDTO = new RenewalPackageDTO();
+        renewalPackageDTO.setImageUrl(imageUrl);
+        renewalPackageDTO.setName(watch.getName());
+        renewalPackageDTO.setSize(watch.getSize());
+        renewalPackageDTO.setPrice(watch.getPrice());
+        renewalPackageDTO.setCreateDate(watch.getCreateDate());
+        renewalPackageDTO.setAddress(watch.getAddress());
+        renewalPackageDTO.setStatus(watch.getStatus());
+        renewalPackageDTO.setStartDate(watch.getStartDate());
+        renewalPackageDTO.setEndDate(watch.getEndDate());
+        renewalPackageDTO.setNumberDatePost(watch.getNumberDatePost());
+        renewalPackageDTO.setTypePost(watch.getTypePost());
+
+        return renewalPackageDTO;
+    }
+
 
 
     private Date calculateVipEndDate(int vipDays) {

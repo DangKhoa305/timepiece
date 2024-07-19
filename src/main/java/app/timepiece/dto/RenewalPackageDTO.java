@@ -1,7 +1,7 @@
 package app.timepiece.dto;
 
-
 import lombok.*;
+
 import java.util.Date;
 
 @Getter
@@ -9,8 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
-public class WatchSellerDTO {
+public class RenewalPackageDTO {
     private String imageUrl;
     private String name;
     private String size;
@@ -22,4 +21,5 @@ public class WatchSellerDTO {
     private String typePost;
     private int numberDatePost;
     private Date endDate;
+    private double totalPrice;
 }

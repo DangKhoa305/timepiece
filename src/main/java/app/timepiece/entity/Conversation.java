@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "conversations")
+@Table(name = "Conversations")
 public class Conversation {
 
     @Id
@@ -32,7 +32,9 @@ public class Conversation {
     @Column(nullable = false)
     private Date createdAt;
 
-
+    @ManyToOne
+    @JoinColumn(name = "watch_id", nullable = false)
+    private Watch watch;
 }
 
 

@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "messages")
+@Table(name = "Messages")
 public class Message {
 
     @Id

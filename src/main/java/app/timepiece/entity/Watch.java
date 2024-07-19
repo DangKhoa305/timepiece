@@ -94,6 +94,7 @@ public class Watch {
 
     @ManyToOne
     @JoinColumn(name = "renewal_package_id")
+    @ToString.Exclude
     private RenewalPackage renewalPackage;
 
 

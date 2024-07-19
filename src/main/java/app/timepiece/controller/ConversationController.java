@@ -21,10 +21,9 @@ public class ConversationController {
     private WatchRepository watchRepository;
 
     @PostMapping("/start")
-    public Conversation startConversation(@RequestParam Long senderId, @RequestParam Long watchId) {
-        Watch watch = watchRepository.findById(watchId).orElseThrow(() -> new RuntimeException("Watch not found"));
-        Long recipientId = watch.getUser().getId();
-
+    public Conversation startConversation(@RequestParam Long senderId, @RequestParam Long recipientId) {
         return conversationService.getOrCreateConversation(senderId, recipientId);
     }
+
+
 }

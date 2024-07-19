@@ -9,12 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -139,6 +138,7 @@ public class WatchServiceImpl implements WatchService {
         watch.setCreateDate(new Date());
         watch.setUpdateDate(new Date());
         watch.setArea(watchDTO.getArea());
+        watch.setExpired(true);
 
         Watch savedWatch = watchRepository.save(watch);
 
@@ -310,7 +310,7 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setStartDate(watch.getStartDate());
         watchDTO.setEndDate(watch.getEndDate());
         watchDTO.setNumberDatePost(watch.getNumberDatePost());
-        watchDTO.setTypePost(watch.getTypePost());
+        watchDTO.setTypePost(watch.getRenewalPackage().getName());
 
         return watchDTO;
     }
@@ -417,30 +417,38 @@ public class WatchServiceImpl implements WatchService {
 //        return watchDTO;
 //    }
 
-
+    @Override
     @Transactional
-    public RenewalPackageDTO renewWatch(Long watchId, Long renewalPackageId, String typePost) {
+    public RenewalPackageDTO renewWatch(Long watchId, Long renewalPackageId) {
         Watch watch = watchRepository.findById(watchId)
                 .orElseThrow(() -> new RuntimeException("Watch not found"));
 
         RenewalPackage renewalPackage = renewalPackageRepository.findById(renewalPackageId)
                 .orElseThrow(() -> new RuntimeException("Renewal package not found"));
 
-        LocalDateTime now = LocalDateTime.now();
-         LocalDateTime newEndTime;
+        Date now = new Date();
+        Date newEndTime;
 
-        Date watchEndDate = watch.getEndDate();
-        if (watchEndDate == null || watchEndDate.toInstant().isBefore(now.atZone(ZoneId.systemDefault()).toInstant())) {
-            newEndTime = now.plusDays(renewalPackage.getDuration());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+
+        // Nếu tin đăng đã hết hạn hoặc chưa từng gia hạn
+        if (watch.getEndDate() == null || watch.getEndDate().before(now)) {
+            calendar.add(Calendar.DAY_OF_MONTH, renewalPackage.getDuration());
+            newEndTime = calendar.getTime();
+            watch.setNumberDatePost(renewalPackage.getDuration());
         } else {
-            newEndTime = watchEndDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().plusDays(renewalPackage.getDuration());
+            // Nếu tin đăng vẫn còn hạn, gia hạn thêm vào endTime hiện tại
+            calendar.setTime(watch.getEndDate());
+            calendar.add(Calendar.DAY_OF_MONTH, renewalPackage.getDuration());
+            newEndTime = calendar.getTime();
+            watch.setNumberDatePost(watch.getNumberDatePost() + renewalPackage.getDuration());
         }
 
-        watch.setStartDate(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()));
-        watch.setEndDate(Date.from(newEndTime.atZone(ZoneId.systemDefault()).toInstant()));
-        watch.setTypePost(typePost);
-        watch.setPrice(renewalPackage.getPrice());
-        watch.setStatus("ACTIVE");
+        watch.setStartDate(now);
+        watch.setEndDate(newEndTime);
+        watch.setRenewalPackage(renewalPackage);
+        watch.setExpired(false);
 
         watch = watchRepository.save(watch);
 
@@ -468,17 +476,31 @@ public class WatchServiceImpl implements WatchService {
         renewalPackageDTO.setStartDate(watch.getStartDate());
         renewalPackageDTO.setEndDate(watch.getEndDate());
         renewalPackageDTO.setNumberDatePost(watch.getNumberDatePost());
-        renewalPackageDTO.setTypePost(watch.getTypePost());
+        renewalPackageDTO.setTypePost(watch.getRenewalPackage().getName());
+
 
         return renewalPackageDTO;
     }
 
+    @Override
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy mỗi ngày lúc 00:00
+    public void checkAndExpireWatches() {
+        List<Watch> watches = watchRepository.findAll();
+        Date now = new Date();
 
-
-    private Date calculateVipEndDate(int vipDays) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, vipDays);
-        return calendar.getTime();
+        for (Watch watch : watches) {
+            if (watch.getEndDate() != null && watch.getEndDate().before(now)) {
+                watch.setExpired(true);
+                watchRepository.save(watch);
+            }
+        }
     }
+
+//    private Date calculateVipEndDate(int vipDays) {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.DAY_OF_YEAR, vipDays);
+//        return calendar.getTime();
+//    }
 
 }

@@ -4,6 +4,8 @@ import app.timepiece.dto.*;
 import app.timepiece.entity.Watch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,4 +27,11 @@ public interface WatchService {
                                                          String type, String brand, String watchStatus, String status,
                                                          String accessories, String name, Pageable pageable);
     List<WatchSellerDTO> getWatchesByUserId(Long userId);
+
+    @Transactional
+    RenewalPackageDTO renewWatch(Long watchId, Long renewalPackageId);
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy mỗi ngày lúc 00:00
+    void checkAndExpireWatches();
 }

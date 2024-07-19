@@ -154,6 +154,16 @@ public class WatchController {
                 status, accessories, name, pageable);
     }
 
+    @PostMapping("/{id}/renew")
+    public ResponseEntity<?> renewWatch(@PathVariable Long watchId, @RequestParam Long renewalPackageId) {
+        try {
+        RenewalPackageDTO updatedWatchDTO = watchService.renewWatch(watchId,renewalPackageId);
+        return ResponseEntity.ok(updatedWatchDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 //    @PutMapping("/{watchid}/vip")
 //    public ResponseEntity<?> makeWatchVip(
 //            @PathVariable Long watchid,

@@ -299,6 +299,10 @@ public class WatchServiceImpl implements WatchService {
                 .findFirst()
                 .orElse(null);
 
+        String renewalPackageName = watch.getRenewalPackage() != null
+                ? watch.getRenewalPackage().getName()
+                :"Đăng tin bình thường";
+
         WatchSellerDTO watchDTO = new WatchSellerDTO();
         watchDTO.setImageUrl(imageUrl);
         watchDTO.setName(watch.getName());
@@ -310,7 +314,7 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setStartDate(watch.getStartDate());
         watchDTO.setEndDate(watch.getEndDate());
         watchDTO.setNumberDatePost(watch.getNumberDatePost());
-        watchDTO.setTypePost(watch.getRenewalPackage().getName());
+        watchDTO.setTypePost(renewalPackageName);
 
         return watchDTO;
     }

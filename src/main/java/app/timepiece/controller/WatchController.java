@@ -92,8 +92,10 @@ public class WatchController {
         return ResponseEntity.ok(watchDTO);
     }
 
-    @GetMapping("/user/{userId}/status/{status}")
-    public ResponseEntity<List<WatchSellerDTO>> getWatchesByUserIdAndStatus(@PathVariable Long userId, @PathVariable String status) {
+    @GetMapping("/user/{userId}/status")
+    public ResponseEntity<List<WatchSellerDTO>> getWatchesByUserIdAndStatus(
+            @PathVariable Long userId,
+            @RequestParam(required = false) String status) {
         List<WatchSellerDTO> watches = watchService.getWatchesByUserIdAndStatus(userId, status);
         return ResponseEntity.ok(watches);
     }
@@ -152,17 +154,17 @@ public class WatchController {
                 status, accessories, name, pageable);
     }
 
-    @PutMapping("/{watchid}/vip")
-    public ResponseEntity<?> makeWatchVip(
-            @PathVariable Long watchid,
-            @RequestParam int vipDays,
-            @RequestParam Long userId,
-            @RequestParam double vipFee) {
-        try {
-            WatchDTO updatedWatchDTO = watchService.makeWatchVip(watchid, vipDays, userId, vipFee);
-            return ResponseEntity.ok(updatedWatchDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+//    @PutMapping("/{watchid}/vip")
+//    public ResponseEntity<?> makeWatchVip(
+//            @PathVariable Long watchid,
+//            @RequestParam int vipDays,
+//            @RequestParam Long userId,
+//            @RequestParam double vipFee) {
+//        try {
+//            WatchDTO updatedWatchDTO = watchService.makeWatchVip(watchid, vipDays, userId, vipFee);
+//            return ResponseEntity.ok(updatedWatchDTO);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        }
+//    }
 }

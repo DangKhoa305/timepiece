@@ -74,7 +74,7 @@ public class Watch {
 
     private Date updateDate;
 
-    private Date vipEndDate;
+    private Date endDate;
 
     private String area;
 
@@ -85,4 +85,9 @@ public class Watch {
 
     @OneToMany(mappedBy = "watch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WatchImage> images;
+
+    private  Date startDate;
+    private String typePost;
+    private int numberDatePost;
+
 }

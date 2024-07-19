@@ -74,7 +74,7 @@ public class Watch {
 
     private Date updateDate;
 
-    private Date endDate;
+
 
     private String area;
 
@@ -86,8 +86,15 @@ public class Watch {
     @OneToMany(mappedBy = "watch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WatchImage> images;
 
+
+    private Date endDate;
     private  Date startDate;
-    private String typePost;
     private int numberDatePost;
+    private boolean expired;
+
+    @ManyToOne
+    @JoinColumn(name = "renewal_package_id")
+    private RenewalPackage renewalPackage;
+
 
 }

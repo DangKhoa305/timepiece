@@ -2,6 +2,8 @@ package app.timepiece.dto;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,5 +20,6 @@ public class ShowWatchDTO {
     private String userAvatar;
     private Double userRatingScore;
     private String area;
+    private Date createDate;
 
 }

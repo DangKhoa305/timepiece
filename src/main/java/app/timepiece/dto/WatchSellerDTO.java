@@ -17,6 +17,7 @@ public class WatchSellerDTO {
     private double price;
     private Date createDate;
     private String address;
+    private String area;
     private String status;
     private  Date startDate;
     private String typePost;

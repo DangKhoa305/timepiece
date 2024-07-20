@@ -32,6 +32,7 @@ public class WatchDTO {
     private String referenceCode;
     private String placeOfProduction;
     private String address;
+    private String area;
     private Date createDate;
     private Date updateDate;
     private String watchTypeName;

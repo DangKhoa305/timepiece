@@ -2,6 +2,8 @@ package app.timepiece.dto;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,6 +22,7 @@ public class SearchWatchDTO {
     private String status;
     private String area;
     private String imageUrl;
+    private Date createDate;
 
 
 }

@@ -273,6 +273,7 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setReferenceCode(watch.getReferenceCode());
         watchDTO.setPlaceOfProduction(watch.getPlaceOfProduction());
         watchDTO.setAddress(watch.getAddress());
+        watchDTO.setArea(watch.getArea());
         watchDTO.setCreateDate(watch.getCreateDate());
         watchDTO.setUpdateDate(watch.getUpdateDate());
         watchDTO.setWatchTypeName(watch.getWatchType().getTypeName());
@@ -310,6 +311,7 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setPrice(watch.getPrice());
         watchDTO.setCreateDate(watch.getCreateDate());
         watchDTO.setAddress(watch.getAddress());
+        watchDTO.setArea(watch.getArea());
         watchDTO.setStatus(watch.getStatus());
         watchDTO.setStartDate(watch.getStartDate());
         watchDTO.setEndDate(watch.getEndDate());
@@ -366,6 +368,7 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setSellerId(watch.getUser().getId());
         searchWatchDTO.setSellerName(watch.getUser().getName());
         searchWatchDTO.setSellerImage(watch.getUser().getAvatar());
+        searchWatchDTO.setCreateDate(watch.getCreateDate());
         List<WatchImage> images = watch.getImages();
         if (images != null && !images.isEmpty()) {
             searchWatchDTO.setImageUrl(images.get(0).getImageUrl());
@@ -476,6 +479,7 @@ public class WatchServiceImpl implements WatchService {
         renewalPackageDTO.setPrice(watch.getPrice());
         renewalPackageDTO.setCreateDate(watch.getCreateDate());
         renewalPackageDTO.setAddress(watch.getAddress());
+        renewalPackageDTO.setArea(watch.getArea());
         renewalPackageDTO.setStatus(watch.getStatus());
         renewalPackageDTO.setStartDate(watch.getStartDate());
         renewalPackageDTO.setEndDate(watch.getEndDate());

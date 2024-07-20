@@ -103,7 +103,8 @@ public class WatchServiceImpl implements WatchService {
                 watch.getUser().getId(),
                 watch.getUser().getName(),
                 watch.getUser().getAvatar(),
-                watch.getUser().getRatingScore()
+                watch.getUser().getRatingScore(),
+                watch.getArea()
         );
     }
 

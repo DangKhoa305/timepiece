@@ -29,8 +29,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId) {
-        OrderDTO order = orderService.getOrderById(orderId);
+    public ResponseEntity<UserOrderDTO> getOrderById(@PathVariable Long orderId) {
+        UserOrderDTO order = orderService.getOrderById(orderId);
         if (order == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -56,12 +56,12 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/status")
-    public ResponseEntity<OrderDTO> updateOrderStatus(
+    public ResponseEntity<UserOrderDTO> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestParam String status) {
 
         try {
-            OrderDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
+            UserOrderDTO updatedOrder = orderService.updateOrderStatus(orderId, status);
             return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

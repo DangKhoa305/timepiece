@@ -57,7 +57,7 @@ public class WatchServiceImpl implements WatchService {
 //    }
 
     public List<ShowWatchDTO> getTop12WatchesByStatus() {
-        List<Watch> watches = watchRepository.findByStatusOrderByCreateDateDesc("Approved").stream().limit(12).collect(Collectors.toList());
+        List<Watch> watches = watchRepository.findByStatusOrderByCreateDateDesc("SHOW").stream().limit(12).collect(Collectors.toList());
         return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
     }
 
@@ -88,6 +88,8 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setUserAvatar(watch.getUser().getAvatar());
         watchDTO.setUserPhoneNumber(watch.getUser().getPhoneNumber());
         watchDTO.setUserRatingScore(watch.getUser().getRatingScore());
+        watchDTO.setAddress(watch.getAddress());
+        watchDTO.setArea(watch.getArea());
         return watchDTO;
     }
 
@@ -105,6 +107,7 @@ public class WatchServiceImpl implements WatchService {
                 watch.getUser().getAvatar(),
                 watch.getUser().getRatingScore(),
                 watch.getArea(),
+                watch.getAddress(),
                 watch.getCreateDate()
         );
     }
@@ -310,6 +313,8 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setImageUrl(imageUrl);
         watchDTO.setName(watch.getName());
         watchDTO.setSize(watch.getSize());
+        watchDTO.setType(watch.getWatchType().getTypeName());
+        watchDTO.setBrand(watch.getBrand().getBrandName());
         watchDTO.setPrice(watch.getPrice());
         watchDTO.setCreateDate(watch.getCreateDate());
         watchDTO.setAddress(watch.getAddress());
@@ -363,10 +368,13 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setId(watch.getId());
         searchWatchDTO.setName(watch.getName());
         searchWatchDTO.setPrice(watch.getPrice());
-        searchWatchDTO.setStatus(watch.getWatchStatus());
+        searchWatchDTO.setWatchstatus(watch.getWatchStatus());
+        searchWatchDTO.setBrand(watch.getBrand().getBrandName());
+        searchWatchDTO.setType(watch.getWatchType().getTypeName());
         searchWatchDTO.setStatus(watch.getStatus());
         searchWatchDTO.setAccessories(watch.getAccessories());
         searchWatchDTO.setArea(watch.getArea());
+        searchWatchDTO.setAddress(watch.getAddress());
         searchWatchDTO.setSellerId(watch.getUser().getId());
         searchWatchDTO.setSellerName(watch.getUser().getName());
         searchWatchDTO.setSellerImage(watch.getUser().getAvatar());

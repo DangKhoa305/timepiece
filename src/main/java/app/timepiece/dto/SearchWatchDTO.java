@@ -13,6 +13,8 @@ public class SearchWatchDTO {
     private Long id;
     private String name;
     private String watchstatus;
+    private String brand;
+    private String type;
     private double price;
     private Long sellerId;
     private String sellerName;
@@ -21,6 +23,7 @@ public class SearchWatchDTO {
     private String accessories;
     private String status;
     private String area;
+    private String address;
     private String imageUrl;
     private Date createDate;
 

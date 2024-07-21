@@ -13,7 +13,6 @@ import app.timepiece.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.WatchService;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,28 +30,26 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private WatchServiceImpl watchService;
+
 
     @Override
     public Order createOrder(Long watchId, Long userId) {
-        // Lấy thông tin Watch từ WatchService dựa trên watchId
+
         Optional<Watch> watchOptional = watchRepository.findById(watchId);
         if (watchOptional.isEmpty()) {
             throw new IllegalArgumentException("Watch not found with id: " + watchId);
         }
         Watch watch = watchOptional.get();
 
-        // Lấy thông tin User từ UserRepository dựa trên userId
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found with id: " + userId);
         }
         User user = userOptional.get();
 
-        // Tạo đối tượng Order
+
         Order order = Order.builder()
-                .orderDate(new Date()) // Có thể sử dụng thời gian từ request nếu có
+                .orderDate(new Date())
                 .totalPrice(watch.getPrice())
                 .createDate(new Date())
                 .updateDate(new Date())
@@ -66,35 +63,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long orderId) {
+    public UserOrderDTO getOrderById(Long orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
 
         if (!orderOptional.isPresent()) {
             return null;
         }
         Order order = orderOptional.get();
-        WatchDTO watch = watchService.getWatchById(order.getWatch().getId());
-
-        return convertToOrderDTO(order,watch.getUserId());
+        return convertToUserOrderDTO(order);
     }
 
-    private OrderDTO convertToOrderDTO(Order order , Long sellerId ) {
-        List<String> watchImages = order.getWatch().getImages().stream()
-                .map(WatchImage::getImageUrl)
-                .collect(Collectors.toList());
-
-        return OrderDTO.builder()
-                .id(order.getId())
-                .note(order.getNote())
-                .orderDate(order.getOrderDate())
-                .totalPrice(order.getTotalPrice())
-                .userId(order.getUser().getId())
-                .watchName(order.getWatch().getName())
-                .status(order.getStatus())
-                .watchImages(watchImages)
-                .sellerId(sellerId)
-                .build();
-    }
+//    private OrderDTO convertToOrderDTO(Order order , Long sellerId ) {
+//        List<String> watchImages = order.getWatch().getImages().stream()
+//                .map(WatchImage::getImageUrl)
+//                .collect(Collectors.toList());
+//
+//        return OrderDTO.builder()
+//                .id(order.getId())
+//                .note(order.getNote())
+//                .orderDate(order.getOrderDate())
+//                .totalPrice(order.getTotalPrice())
+//                .userId(order.getUser().getId())
+//                .watchName(order.getWatch().getName())
+//                .status(order.getStatus())
+//                .watchImages(watchImages)
+//                .sellerId(sellerId)
+//                .build();
+//    }
 
     @Override
     public List<UserOrderDTO> getOrdersByBuyerId(Long buyerId) {
@@ -124,6 +119,10 @@ public class OrderServiceImpl implements OrderService {
                 .price(order.getWatch().getPrice())
                 .createDate(order.getWatch().getCreateDate())
                 .address(order.getWatch().getAddress())
+                .area((order.getWatch().getArea()))
+                .status(order.getWatch().getStatus())
+                .type(order.getWatch().getWatchType().getTypeName())
+                .brand(order.getWatch().getBrand().getBrandName())
                 .build();
 
         UserDTO sellerDTO = UserDTO.builder()
@@ -158,8 +157,6 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(order.getOrderDate())
                 .totalPrice(order.getTotalPrice())
                 .status(order.getStatus())
-                //.watchName(order.getWatch().getName())
-                //.watchImages(watchImages)
                 .watch(watchSellerDTO)
                 .seller(sellerDTO)
                 .buyer(buyerDTO)
@@ -167,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrderStatus(Long orderId, String status) {
+    public UserOrderDTO updateOrderStatus(Long orderId, String status) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (!orderOptional.isPresent()) {
             throw new RuntimeException("Order not found");

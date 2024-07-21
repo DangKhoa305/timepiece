@@ -20,6 +20,7 @@ public class ShowWatchDTO {
     private String userAvatar;
     private Double userRatingScore;
     private String area;
+    private String address;
     private Date createDate;
 
 }

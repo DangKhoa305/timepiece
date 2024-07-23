@@ -80,4 +80,9 @@ public class OrderController {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{orderId}/complete")
+    public ResponseEntity<String> completeOrder(@PathVariable Long orderId) {
+        return orderService.completeOrder(orderId);
+    }
 }

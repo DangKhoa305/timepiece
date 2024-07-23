@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order createOrder(Long watchId, Long userId, String paymentMethod) {
+    public Order createOrder(Long watchId, Long userId) {
 
         Optional<Watch> watchOptional = watchRepository.findById(watchId);
         if (watchOptional.isEmpty()) {
@@ -66,7 +66,6 @@ public class OrderServiceImpl implements OrderService {
                 .user(user)
                 .watch(watch)
                 .buyeraddress(user.getAddress())
-                .paymentMethod(paymentMethod)
                 .build();
 
         // Lưu Order vào cơ sở dữ liệu và trả về đối tượng đã lưu
@@ -189,11 +188,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public UserOrderDTO updateBuyerAddress(Long orderId, String newAddress) {
+    public UserOrderDTO updateBuyerAddress(Long orderId, String newAddress, String paymentMethod) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setBuyeraddress(newAddress);
+            if (newAddress != null) {
+                order.setBuyeraddress(newAddress);
+            }
+            if (paymentMethod != null) {
+                order.setPaymentMethod(paymentMethod);
+            }
+            order.setUpdateDate(new Date());
             orderRepository.save(order);
             return convertToUserOrderDTO(order);
         } else {

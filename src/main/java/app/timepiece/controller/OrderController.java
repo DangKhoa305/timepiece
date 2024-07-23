@@ -22,12 +22,11 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<String> createOrder(
             @RequestParam Long watchId,
-            @RequestParam Long userId,
-            @RequestParam String paymentMethod)
+            @RequestParam Long userId)
 
     {
 
-        orderService.createOrder(watchId, userId, paymentMethod);
+        orderService.createOrder(watchId, userId);
         return new ResponseEntity<>("Order created successfully", HttpStatus.CREATED);
     }
 
@@ -72,9 +71,9 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}/buyeraddress")
-    public ResponseEntity<?> updateBuyerAddress(@PathVariable Long orderId, @RequestParam String newAddress) {
+    public ResponseEntity<?> updateBuyerAddress(@PathVariable Long orderId, @RequestParam String newAddress,@RequestParam(required = false) String paymentMethod) {
         try {
-            UserOrderDTO updatedOrder = orderService.updateBuyerAddress(orderId, newAddress);
+            UserOrderDTO updatedOrder = orderService.updateBuyerAddress(orderId, newAddress, paymentMethod);
             return ResponseEntity.ok(updatedOrder);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());

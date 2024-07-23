@@ -45,11 +45,11 @@ public class PaymentController {
     private OrderRepository orderRepository;
 
     @GetMapping("/vn-pay")
-    public ResponseEntity<PaymentDTO> pay(  @RequestParam("amount") Integer amount,
+    public ResponseEntity<PaymentDTO> pay(
                                             @RequestParam(value = "bankCode", required = false) String bankCode,
                                             @RequestParam("orderId") Long orderId,
                                             @RequestParam String returnUrl ) {
-        PaymentDTO paymentDTO = paymentService.createVnPayPayment(amount, bankCode, orderId ,returnUrl);
+        PaymentDTO paymentDTO = paymentService.createVnPayPayment( bankCode, orderId ,returnUrl);
         return ResponseEntity.status(HttpStatus.OK).body(paymentDTO);
     }
 

@@ -2,15 +2,16 @@ package app.timepiece.service.serviceImpl;
 
 
 import app.timepiece.dto.*;
-import app.timepiece.entity.Order;
-import app.timepiece.entity.User;
-import app.timepiece.entity.Watch;
-import app.timepiece.entity.WatchImage;
+import app.timepiece.entity.*;
 import app.timepiece.repository.OrderRepository;
+import app.timepiece.repository.TransactionRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.repository.WatchRepository;
 import app.timepiece.service.OrderService;
+import app.timepiece.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private WalletService walletService;
 
 
 
@@ -191,6 +198,51 @@ public class OrderServiceImpl implements OrderService {
             return convertToUserOrderDTO(order);
         } else {
             throw new RuntimeException("Order not found with id: " + orderId);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> completeOrder(Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            if ("complete".equalsIgnoreCase(order.getStatus())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Order already completed");
+            }
+
+            order.setStatus("complete");
+            order.setUpdateDate(new Date());
+            orderRepository.save(order);
+
+            Double totalPrice = order.getTotalPrice();
+
+            Wallet sellerWallet = order.getWatch().getUser().getWallet();
+            if (sellerWallet == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Wallet not found for seller");
+            }
+
+            walletService.depositToWallet(sellerWallet.getId(), totalPrice);
+
+            Transaction sellerTransaction = new Transaction();
+            sellerTransaction.setTransactionType("DEPOSIT");
+            sellerTransaction.setAmount(totalPrice);
+            sellerTransaction.setCreatedAt(new Date());
+            sellerTransaction.setDescription("Credited for order ID: " + orderId);
+            sellerTransaction.setWallet(sellerWallet);
+            sellerTransaction.setUser(order.getWatch().getUser());
+
+            transactionRepository.save(sellerTransaction);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Order completed and wallets updated");
+
+        } catch (RuntimeException e) {
+            String errorMessage = "An error occurred: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal Server Error: " + errorMessage);
         }
     }
 }

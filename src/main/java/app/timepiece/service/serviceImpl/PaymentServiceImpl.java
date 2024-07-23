@@ -3,8 +3,10 @@ package app.timepiece.service.serviceImpl;
 
 import app.timepiece.config.VNPAYConfig;
 import app.timepiece.dto.PaymentDTO;
+import app.timepiece.entity.Order;
 import app.timepiece.entity.Transaction;
 import app.timepiece.entity.User;
+import app.timepiece.repository.OrderRepository;
 import app.timepiece.repository.TransactionRepository;
 import app.timepiece.repository.UserRepository;
 import app.timepiece.service.PaymentService;
@@ -23,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
     private VNPAYConfig vnPayConfig;
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,8 +33,13 @@ public class PaymentServiceImpl implements PaymentService {
     private String vnp_ReturnUrl = "http://localhost:8080/payment/vn-pay-postwatch-callback";
 
     @Override
-    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long orderId , String url) {
-        long amountInCents = amount * 100L;
+    public PaymentDTO createVnPayPayment(String bankCode, Long orderId , String url) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+
+        long amountInCents = (long) (order.getTotalPrice() * 100);
 
 
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
@@ -45,29 +52,14 @@ public class PaymentServiceImpl implements PaymentService {
         String transactionId = String.valueOf(orderId);
         vnpParamsMap.put("vnp_TxnRef", transactionId);
 
-        // Update order info
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang: " + transactionId);
         vnpParamsMap.put("vnp_ReturnUrl",url);
-        //vnpParamsMap.put("vnp_ReturnUrl",url + "?renewalPackageId=" + renewalPackageId + "&watchId=" + watchId );
-        //build query url
+
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
-
-//        // Lưu thông tin giao dịch vào database
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Transaction transaction = new Transaction();
-//        transaction.setTransactionId(transactionId);
-//        transaction.setAmount(amountInCents);
-//        transaction.setBankCode(bankCode);
-//        transaction.setStatus("PENDING");
-//        transaction.setPaymentUrl(paymentUrl);
-//        transaction.setCreatedAt(new Date());
-//        transaction.setUser(user);
-//        transactionRepository.save(transaction);
 
         return PaymentDTO.builder()
                 .code("ok")
@@ -101,19 +93,6 @@ public class PaymentServiceImpl implements PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
 
-        // Lưu thông tin giao dịch vào database
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Transaction transaction = new Transaction();
-//        transaction.setTransactionId(transactionId);
-//        transaction.setAmount(amountInCents);
-//        transaction.setBankCode(bankCode);
-//        transaction.setStatus("PENDING");
-//        transaction.setPaymentUrl(paymentUrl);
-//        transaction.setCreatedAt(new Date());
-//        transaction.setUser(user);
-//        transactionRepository.save(transaction);
-
         return PaymentDTO.builder()
                 .code("ok")
                 .message("success")
@@ -133,10 +112,10 @@ public class PaymentServiceImpl implements PaymentService {
         vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress());
 
         String transactionId = VNPayUtil.getRandomNumber(8);
-       // String transactionId = String.valueOf(orderId);
+
         vnpParamsMap.put("vnp_TxnRef", transactionId);
 
-        // Update order info
+
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang: " + VNPayUtil.getRandomNumber(8));
 
 
@@ -148,19 +127,6 @@ public class PaymentServiceImpl implements PaymentService {
         String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
-
-        // Lưu thông tin giao dịch vào database
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Transaction transaction = new Transaction();
-//        transaction.setTransactionId(transactionId);
-//        transaction.setAmount(amountInCents);
-//        transaction.setBankCode(bankCode);
-//        transaction.setStatus("PENDING");
-//        transaction.setPaymentUrl(paymentUrl);
-//        transaction.setCreatedAt(new Date());
-//        transaction.setUser(user);
-//        transactionRepository.save(transaction);
 
         return PaymentDTO.builder()
                 .code("ok")

@@ -34,4 +34,5 @@ public interface WatchService {
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?") // Chạy mỗi ngày lúc 00:00
     void checkAndExpireWatches();
+    List<WatchDTO> getAllActiveWatchesSortedByStartDate();
 }

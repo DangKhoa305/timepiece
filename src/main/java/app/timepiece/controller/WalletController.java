@@ -39,43 +39,69 @@ public class WalletController {
 
     @GetMapping("/vnpay-callback")
     public ResponseEntity<PaymentDTO> paywalletCallbackHandler(@RequestParam("vnp_ResponseCode") String status,
-                                                         @RequestParam("vnp_TxnRef") String transactionId,
-                                                               @RequestParam("vnp_Amount") String amount) {
-        // Cập nhật trạng thái giao dịch
-        Optional<Transaction> transactionOpt = transactionRepository.findByTransactionId(transactionId);
-        if (transactionOpt.isPresent()) {
-            Transaction transaction = transactionOpt.get();
-            if ("00".equals(status)) {
-                transaction.setStatus("SUCCESS");
-                Long userId = transaction.getUser().getId();
-                Optional<Wallet> wallet = walletService.getWalletByUserId(userId);
-                if (!wallet.isPresent()) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PaymentDTO("404", "Wallet not found", null));
-                }
-                Long walletId = wallet.get().getId();
-                Double amountDouble = Double.parseDouble(amount);
-                Double amountDivided = amountDouble / 100L;
-                try {
+                                                               @RequestParam("vnp_OrderInfo") String orderInfo,
+                                                               @RequestParam("vnp_Amount") String amount,
+                                                               @RequestParam("userId") Long userId) {
+        if (!"00".equals(status)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new PaymentDTO(status, "Failed", null));
+        }
 
-                    walletService.depositToWallet(walletId, amountDivided);
-                } catch (RuntimeException e) {
-                    String errorMessage = "Failed to deposit amount to wallet: " + e.getMessage();
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new PaymentDTO("500", "Internal Server Error", errorMessage));
-                }
+        Double amountDouble;
+        try {
+            amountDouble = Double.parseDouble(amount);
+        } catch (NumberFormatException e) {
+            String errorMessage = "Invalid amount format: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new PaymentDTO("400", "Invalid amount format", errorMessage));
+        }
 
-            } else {
-                transaction.setStatus("FAILED");
-            }
-            transaction.setUpdatedAt(new Date());
+        Double amountDivided = amountDouble / 100;
+
+        Transaction transaction = new Transaction();
+        transaction.setTransactionType("DEPOSIT");
+        transaction.setAmount(amountDivided);
+        transaction.setCreatedAt(new Date());
+        transaction.setDescription(orderInfo);
+
+        Optional<Wallet> walletOpt;
+        try {
+            walletOpt = walletService.getWalletByUserId(userId);
+        } catch (RuntimeException e) {
+            String errorMessage = "Failed to retrieve wallet: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PaymentDTO("500", "Internal Server Error", errorMessage));
+        }
+
+        if (!walletOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new PaymentDTO("404", "Wallet not found", null));
+        }
+
+        Wallet walletEntity = walletOpt.get();
+        try {
+            walletService.depositToWallet(walletEntity.getId(), amountDivided);
+        } catch (RuntimeException e) {
+            String errorMessage = "Failed to deposit amount to wallet: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PaymentDTO("500", "Internal Server Error", errorMessage));
+        }
+
+        transaction.setWallet(walletEntity);
+        transaction.setUser(walletEntity.getUser());
+
+        try {
             transactionRepository.save(transaction);
+        } catch (RuntimeException e) {
+            String errorMessage = "Failed to save transaction: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PaymentDTO("500", "Internal Server Error", errorMessage));
         }
-        if (status.equals("00")) {
-            PaymentDTO paymentDTO = new PaymentDTO("00", "Success", "");
-            return ResponseEntity.status(HttpStatus.OK).body(paymentDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PaymentDTO(status, "Failed", null));
-        }
+
+        PaymentDTO paymentDTO = new PaymentDTO("00", "Success", "");
+        return ResponseEntity.status(HttpStatus.OK).body(paymentDTO);
     }
+
 
     @GetMapping("/user/{userId}/balance")
     public ResponseEntity<Double> getBalanceByUserId(@PathVariable Long userId) {

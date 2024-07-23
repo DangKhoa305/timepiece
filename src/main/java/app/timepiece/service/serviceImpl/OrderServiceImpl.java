@@ -11,6 +11,7 @@ import app.timepiece.repository.UserRepository;
 import app.timepiece.repository.WatchRepository;
 import app.timepiece.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public Order createOrder(Long watchId, Long userId) {
+    public Order createOrder(Long watchId, Long userId, String paymentMethod) {
 
         Optional<Watch> watchOptional = watchRepository.findById(watchId);
         if (watchOptional.isEmpty()) {
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userOptional.get();
 
 
+
         Order order = Order.builder()
                 .orderDate(new Date())
                 .totalPrice(watch.getPrice())
@@ -56,6 +58,8 @@ public class OrderServiceImpl implements OrderService {
                 .status("wait")
                 .user(user)
                 .watch(watch)
+                .buyeraddress(user.getAddress())
+                .paymentMethod(paymentMethod)
                 .build();
 
         // Lưu Order vào cơ sở dữ liệu và trả về đối tượng đã lưu
@@ -160,6 +164,7 @@ public class OrderServiceImpl implements OrderService {
                 .watch(watchSellerDTO)
                 .seller(sellerDTO)
                 .buyer(buyerDTO)
+                .buyeraddress(order.getBuyeraddress())
                 .build();
     }
 
@@ -174,5 +179,18 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdateDate(new Date());
         Order updatedOrder = orderRepository.save(order);
         return getOrderById(updatedOrder.getId());
+    }
+
+    @Override
+    public UserOrderDTO updateBuyerAddress(Long orderId, String newAddress) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setBuyeraddress(newAddress);
+            orderRepository.save(order);
+            return convertToUserOrderDTO(order);
+        } else {
+            throw new RuntimeException("Order not found with id: " + orderId);
+        }
     }
 }

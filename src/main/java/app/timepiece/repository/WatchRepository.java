@@ -15,6 +15,11 @@ public interface WatchRepository extends JpaRepository<Watch, Long> {
     List<Watch> findByUserIdAndStatus(Long userId, String status);
     List<Watch> findByStatusOrderByCreateDateDesc(String status);
 
+    @Query("SELECT w FROM Watch w WHERE w.status <> :status")
+    List<Watch> findAllExcludingStatus(@Param("status") String status);
+
+    @Query("SELECT w FROM Watch w ORDER BY w.expired ASC, w.startDate ASC")
+    List<Watch> findAllByExpiredFalseOrderByStartDateAsc();
 //    @Query("SELECT w FROM Watch w " +
 //            "WHERE (:price IS NULL OR w.price = :price) " +
 //            "AND (:address IS NULL OR w.area = :area) " +

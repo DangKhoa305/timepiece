@@ -31,7 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
     private String vnp_ReturnUrl = "http://localhost:8080/payment/vn-pay-postwatch-callback";
 
     @Override
-    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long userId, Long orderId , String url) {
+    public PaymentDTO createVnPayPayment(long amount, String bankCode, Long orderId , String url) {
         long amountInCents = amount * 100L;
 
 
@@ -48,6 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
         // Update order info
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang: " + transactionId);
         vnpParamsMap.put("vnp_ReturnUrl",url);
+        //vnpParamsMap.put("vnp_ReturnUrl",url + "?renewalPackageId=" + renewalPackageId + "&watchId=" + watchId );
         //build query url
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
@@ -55,18 +56,18 @@ public class PaymentServiceImpl implements PaymentService {
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
 
-        // Lưu thông tin giao dịch vào database
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionId);
-        transaction.setAmount(amountInCents);
-        transaction.setBankCode(bankCode);
-        transaction.setStatus("PENDING");
-        transaction.setPaymentUrl(paymentUrl);
-        transaction.setCreatedAt(new Date());
-        transaction.setUser(user);
-        transactionRepository.save(transaction);
+//        // Lưu thông tin giao dịch vào database
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        Transaction transaction = new Transaction();
+//        transaction.setTransactionId(transactionId);
+//        transaction.setAmount(amountInCents);
+//        transaction.setBankCode(bankCode);
+//        transaction.setStatus("PENDING");
+//        transaction.setPaymentUrl(paymentUrl);
+//        transaction.setCreatedAt(new Date());
+//        transaction.setUser(user);
+//        transactionRepository.save(transaction);
 
         return PaymentDTO.builder()
                 .code("ok")
@@ -92,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         // Update order info
         vnpParamsMap.put("vnp_OrderInfo", "nap tien vao vi");
-        vnpParamsMap.put("vnp_ReturnUrl",url);
+        vnpParamsMap.put("vnp_ReturnUrl",url+ "?userId=" + userId );
         //build query url
         String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
         String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
@@ -101,17 +102,17 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
 
         // Lưu thông tin giao dịch vào database
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionId);
-        transaction.setAmount(amountInCents);
-        transaction.setBankCode(bankCode);
-        transaction.setStatus("PENDING");
-        transaction.setPaymentUrl(paymentUrl);
-        transaction.setCreatedAt(new Date());
-        transaction.setUser(user);
-        transactionRepository.save(transaction);
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        Transaction transaction = new Transaction();
+//        transaction.setTransactionId(transactionId);
+//        transaction.setAmount(amountInCents);
+//        transaction.setBankCode(bankCode);
+//        transaction.setStatus("PENDING");
+//        transaction.setPaymentUrl(paymentUrl);
+//        transaction.setCreatedAt(new Date());
+//        transaction.setUser(user);
+//        transactionRepository.save(transaction);
 
         return PaymentDTO.builder()
                 .code("ok")
@@ -120,7 +121,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentDTO createVnPayPost(long amount, String bankCode, Long userId, Long watchId, Long renewalPackageId , String url) {
+    public PaymentDTO createVnPayPost(long amount, String bankCode, Long watchId, Long renewalPackageId , String url) {
         long amountInCents = amount * 100L;
 
 
@@ -149,17 +150,17 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentUrl = vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
 
         // Lưu thông tin giao dịch vào database
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-        Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionId);
-        transaction.setAmount(amountInCents);
-        transaction.setBankCode(bankCode);
-        transaction.setStatus("PENDING");
-        transaction.setPaymentUrl(paymentUrl);
-        transaction.setCreatedAt(new Date());
-        transaction.setUser(user);
-        transactionRepository.save(transaction);
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        Transaction transaction = new Transaction();
+//        transaction.setTransactionId(transactionId);
+//        transaction.setAmount(amountInCents);
+//        transaction.setBankCode(bankCode);
+//        transaction.setStatus("PENDING");
+//        transaction.setPaymentUrl(paymentUrl);
+//        transaction.setCreatedAt(new Date());
+//        transaction.setUser(user);
+//        transactionRepository.save(transaction);
 
         return PaymentDTO.builder()
                 .code("ok")

@@ -23,6 +23,8 @@ public class Order {
     private Date createDate;
     private Date updateDate;
     private String status;
+    private String buyeraddress;
+    private String paymentMethod;
 
     @ManyToOne
     @ToString.Exclude

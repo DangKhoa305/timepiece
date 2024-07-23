@@ -37,4 +37,7 @@ public class WatchDTO {
     private Date updateDate;
     private String watchTypeName;
     private List<String> watchImages;
+    private Date startDate;
+    private Date endDate;
+    private int numberDatePost;
 }

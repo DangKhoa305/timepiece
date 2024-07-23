@@ -47,7 +47,7 @@ public class WatchServiceImpl implements WatchService {
 
     @Override
     public List<WatchDTO> getAllWatches() {
-        return watchRepository.findAll().stream().map(this::convertToWatchDTO).collect(Collectors.toList());
+        return watchRepository.findAllExcludingStatus("CANCEL").stream().map(this::convertToWatchDTO).collect(Collectors.toList());
     }
 
 //    @Override
@@ -68,7 +68,11 @@ public class WatchServiceImpl implements WatchService {
     }
 
     private WatchDTO convertToWatchDTO(Watch watch) {
+        List<WatchImage> watchImages = watchImageRepository.findByWatchId(watch.getId());
+        String imageUrl = watchImages.isEmpty() ? null : watchImages.get(0).getImageUrl();
+
         WatchDTO watchDTO = new WatchDTO();
+        watchDTO.setWatchImages(imageUrl != null ? List.of(imageUrl) : null);
         watchDTO.setId(watch.getId());
         watchDTO.setName(watch.getName());
         watchDTO.setStatus(watch.getStatus());
@@ -90,6 +94,12 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setUserRatingScore(watch.getUser().getRatingScore());
         watchDTO.setAddress(watch.getAddress());
         watchDTO.setArea(watch.getArea());
+        watchDTO.setCreateDate(watch.getCreateDate());
+        watchDTO.setEndDate(watch.getEndDate());
+        watchDTO.setStartDate(watch.getStartDate());
+        watchDTO.setEndDate(watch.getEndDate());
+        watchDTO.setNumberDatePost(watch.getNumberDatePost());
+
         return watchDTO;
     }
 
@@ -521,4 +531,11 @@ public class WatchServiceImpl implements WatchService {
 //        return calendar.getTime();
 //    }
 
+
+    public List<WatchDTO> getAllActiveWatchesSortedByStartDate() {
+        List<Watch> watches = watchRepository.findAllByExpiredFalseOrderByStartDateAsc();
+        return watches.stream()
+                .map(this::convertToWatchDTO)
+                .collect(Collectors.toList());
+    }
 }

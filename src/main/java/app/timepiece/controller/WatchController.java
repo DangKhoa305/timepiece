@@ -1,6 +1,7 @@
 package app.timepiece.controller;
 
 import app.timepiece.dto.*;
+import app.timepiece.entity.Watch;
 import app.timepiece.service.WatchService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,4 +178,10 @@ public class WatchController {
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 //        }
 //    }
+
+    @GetMapping("/getAllActiveWatchesSortedByStartDate")
+    public ResponseEntity<List<WatchDTO>> getActiveWatches() {
+        List<WatchDTO> watches = watchService.getAllActiveWatchesSortedByStartDate();
+        return ResponseEntity.ok(watches);
+    }
 }

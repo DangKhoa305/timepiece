@@ -6,9 +6,10 @@ import app.timepiece.entity.Order;
 import java.util.List;
 
 public interface OrderService {
-    Order createOrder(Long watchId, Long userId);
+    Order createOrder(Long watchId, Long userId, String paymentMethod);
     UserOrderDTO getOrderById(Long orderId);
     List<UserOrderDTO> getOrdersByBuyerId(Long buyerId);
     List<UserOrderDTO> getOrdersBySellerId(Long sellerId);
     UserOrderDTO updateOrderStatus(Long orderId, String status);
+    UserOrderDTO updateBuyerAddress(Long orderId, String newAddress);
 }

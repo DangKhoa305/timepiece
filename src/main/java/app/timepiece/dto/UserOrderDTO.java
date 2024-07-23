@@ -21,4 +21,6 @@ public class UserOrderDTO {
     private WatchSellerDTO watch;
     private UserDTO seller;
     private UserDTO buyer;
+    private String buyeraddress;
+    private String paymentMethod;
 }

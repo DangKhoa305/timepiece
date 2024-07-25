@@ -147,6 +147,7 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .comment(feedback.getComment())
                     .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
+                    .userName(feedback.getUser().getName())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
                     .build();
@@ -181,6 +182,8 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .comment(feedback.getComment())
                     .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
+                    .userName(feedback.getUser().getName())
+                    .avatar(feedback.getUser().getAvatar())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
                     .build();

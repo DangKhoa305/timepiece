@@ -40,4 +40,5 @@ public class WatchDTO {
     private Date startDate;
     private Date endDate;
     private int numberDatePost;
+    private List<FeedbackDTO> feedbacks;
 }

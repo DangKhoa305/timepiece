@@ -3,6 +3,7 @@ package app.timepiece.service.serviceImpl;
 import app.timepiece.dto.*;
 import app.timepiece.entity.*;
 import app.timepiece.repository.*;
+import app.timepiece.service.FeedbackService;
 import app.timepiece.service.WalletService;
 import app.timepiece.service.WatchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class WatchServiceImpl implements WatchService {
 
     @Autowired
     private RenewalPackageRepostory renewalPackageRepository;
+
+    @Autowired
+    private FeedbackService feedbackService;
 
 
     @Override
@@ -263,6 +267,8 @@ public class WatchServiceImpl implements WatchService {
                     .collect(Collectors.toList());
             watchDTO.setWatchImages(imageUrls);
 
+            List<FeedbackDTO> feedbacks = feedbackService.getFeedbackByWatchId(watch.getId());
+            watchDTO.setFeedbacks(feedbacks);
             return watchDTO;
         } else {
             throw new RuntimeException("Watch not found with id: " + id);

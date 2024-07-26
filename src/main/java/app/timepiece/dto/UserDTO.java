@@ -15,9 +15,9 @@ public class UserDTO {
     private String address;
     private String avatar;
     private String phoneNumber;
-    private String status;
     private Date dateCreate;
     private String gender;
     private String birthday;
     private String citizenID;
+    private String status;
 }

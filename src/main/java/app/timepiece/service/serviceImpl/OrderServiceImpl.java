@@ -38,6 +38,14 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WalletService walletService;
 
+    @Override
+    public List<UserOrderDTO> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+
+        // Convert each Order entity to UserOrderDTO
+        return orders.stream().map(this::convertToUserOrderDTO).collect(Collectors.toList());
+    }
+
 
 
     @Override

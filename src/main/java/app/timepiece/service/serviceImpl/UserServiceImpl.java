@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -112,6 +114,15 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RuntimeException("User not found with id: " + id);
         }
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private UserDTO convertToDTO(User user) {

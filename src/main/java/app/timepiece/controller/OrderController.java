@@ -84,4 +84,10 @@ public class OrderController {
     public ResponseEntity<String> completeOrder(@PathVariable Long orderId) {
         return orderService.completeOrder(orderId);
     }
+
+    @GetMapping("/getAllOrders")
+    public ResponseEntity<List<UserOrderDTO>> getAllOrders() {
+        List<UserOrderDTO> orders = orderService.getAllOrders();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
 }

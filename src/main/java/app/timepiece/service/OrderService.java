@@ -14,4 +14,5 @@ public interface OrderService {
     UserOrderDTO updateOrderStatus(Long orderId, String status);
     UserOrderDTO updateBuyerAddress(Long orderId, String newAddress, String paymentMethod);
     ResponseEntity<String> completeOrder(Long orderId);
+    List<UserOrderDTO> getAllOrders();
 }

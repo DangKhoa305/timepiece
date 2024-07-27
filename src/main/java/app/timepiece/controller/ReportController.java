@@ -55,8 +55,7 @@ public class ReportController {
             @RequestParam(required = false, defaultValue = "") String brand,
             @RequestParam(required = false, defaultValue = "") String reportStatus,
             @RequestParam(required = false) Date createDate,
-            @RequestParam int page,
-            @RequestParam int size) {
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return reportService.searchReports(id, brand, reportStatus, createDate, pageable);
     }

@@ -63,11 +63,14 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = userOptional.get();
 
-
+        double productPrice = watch.getPrice();
+        double surchargePercent = 0.05;
+        double surcharge = productPrice * surchargePercent;
+        double totalPrice = productPrice + surcharge;
 
         Order order = Order.builder()
                 .orderDate(new Date())
-                .totalPrice(watch.getPrice())
+                .totalPrice(totalPrice)
                 .createDate(new Date())
                 .updateDate(new Date())
                 .status("wait")

@@ -10,8 +10,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AppraisalRequestRepository extends JpaRepository<AppraisalRequest, Long> {
-    Page<AppraisalRequest> findAll(Pageable pageable);
-    Page<AppraisalRequest> findAllByStatusAndAppraiser(String status, User appraiser, Pageable pageable);
-    Page<AppraisalRequest> findAllByAppraiser(User appraiser, Pageable pageable);
-    Page<AppraisalRequest> findAllByUsers(User user, Pageable pageable);
+//    Page<AppraisalRequest> findAll(Pageable pageable);
+//    Page<AppraisalRequest> findAllByStatusAndAppraiser(String status, User appraiser, Pageable pageable);
+//    Page<AppraisalRequest> findAllByAppraiser(User appraiser, Pageable pageable);
+//    Page<AppraisalRequest> findAllByUsers(User user, Pageable pageable);
+    Page<AppraisalRequest> findAllByOrderByCreateDateDesc(Pageable pageable);
+    Page<AppraisalRequest> findAllByStatusAndAppraiserOrderByCreateDateDesc(String status, User appraiser, Pageable pageable);
+    Page<AppraisalRequest> findAllByAppraiserOrderByCreateDateDesc(User appraiser, Pageable pageable);
+    Page<AppraisalRequest> findAllByUsersOrderByCreateDateDesc(User user, Pageable pageable);
 }

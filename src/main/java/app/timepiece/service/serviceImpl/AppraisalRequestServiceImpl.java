@@ -129,9 +129,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
         Page<AppraisalRequest> appraisalRequestsPage;
         if (status == null || status.isEmpty()) {
-            appraisalRequestsPage = appraisalRequestRepository.findAllByAppraiser(appraiser, pageable);
+            appraisalRequestsPage = appraisalRequestRepository.findAllByAppraiserOrderByCreateDateDesc(appraiser, pageable);
         } else {
-            appraisalRequestsPage = appraisalRequestRepository.findAllByStatusAndAppraiser(status, appraiser, pageable);
+            appraisalRequestsPage = appraisalRequestRepository.findAllByStatusAndAppraiserOrderByCreateDateDesc(status, appraiser, pageable);
         }
         List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
                 .map(this::convertToDTO)
@@ -141,7 +141,7 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     @Override
     public Page<AppraisalRequestListDTO> getAllAppraisalRequests (Pageable pageable) {
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAll(pageable);
+        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByOrderByCreateDateDesc(pageable);
         List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -202,7 +202,7 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
     public Page<AppraisalRequestListDTO> getAllAppraisalRequestsByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByUsers(user, pageable);
+        Page<AppraisalRequest> appraisalRequestsPage = appraisalRequestRepository.findAllByUsersOrderByCreateDateDesc(user, pageable);
         List<AppraisalRequestListDTO> appraisalRequestsList = appraisalRequestsPage.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

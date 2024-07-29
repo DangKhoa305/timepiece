@@ -326,6 +326,7 @@ public class WatchServiceImpl implements WatchService {
                 :"Đăng tin bình thường";
 
         WatchSellerDTO watchDTO = new WatchSellerDTO();
+        watchDTO.setId(watch.getId());
         watchDTO.setImageUrl(imageUrl);
         watchDTO.setName(watch.getName());
         watchDTO.setSize(watch.getSize());

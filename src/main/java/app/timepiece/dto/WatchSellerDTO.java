@@ -11,6 +11,7 @@ import java.util.Date;
 @Builder
 
 public class WatchSellerDTO {
+    private Long id;
     private String imageUrl;
     private String name;
     private String size;

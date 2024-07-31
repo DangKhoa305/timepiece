@@ -66,4 +66,8 @@ public class CreateWatchDTO {
 
     @NotBlank(message = "Area cannot be blank")
     private String area;
+
+    private boolean hasAppraisalCertificate;
+
+    private MultipartFile appraisalCertificateFile;
 }

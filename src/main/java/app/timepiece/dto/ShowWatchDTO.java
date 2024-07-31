@@ -22,5 +22,7 @@ public class ShowWatchDTO {
     private String area;
     private String address;
     private Date createDate;
+    private boolean hasAppraisalCertificate;
+    private String appraisalCertificateUrl;
 
 }

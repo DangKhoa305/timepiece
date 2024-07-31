@@ -26,6 +26,7 @@ public class SearchWatchDTO {
     private String address;
     private String imageUrl;
     private Date createDate;
+    private boolean hasAppraisalCertificate;
 
 
 }

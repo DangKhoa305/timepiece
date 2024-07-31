@@ -54,11 +54,6 @@ public class WatchServiceImpl implements WatchService {
         return watchRepository.findAllExcludingStatus("CANCEL").stream().map(this::convertToWatchDTO).collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<ShowWatchDTO> getTop12Watches() {
-//        List<Watch> watches = watchRepository.findAll().stream().limit(12).collect(Collectors.toList());
-//        return watches.stream().map(this::convertToShowWatchDTO).collect(Collectors.toList());
-//    }
 
     public List<ShowWatchDTO> getTop12WatchesByStatus() {
         List<Watch> watches = watchRepository.findByStatusOrderByCreateDateDesc("SHOW").stream().limit(12).collect(Collectors.toList());
@@ -103,6 +98,8 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setStartDate(watch.getStartDate());
         watchDTO.setEndDate(watch.getEndDate());
         watchDTO.setNumberDatePost(watch.getNumberDatePost());
+        watchDTO.setHasAppraisalCertificate(watch.isHasAppraisalCertificate());
+        watchDTO.setAppraisalCertificateUrl(watch.getAppraisalCertificateUrl());
 
         return watchDTO;
     }
@@ -122,7 +119,10 @@ public class WatchServiceImpl implements WatchService {
                 watch.getUser().getRatingScore(),
                 watch.getArea(),
                 watch.getAddress(),
-                watch.getCreateDate()
+                watch.getCreateDate(),
+                watch.isHasAppraisalCertificate(),
+                watch.getAppraisalCertificateUrl()
+
         );
     }
 
@@ -158,6 +158,20 @@ public class WatchServiceImpl implements WatchService {
         watch.setUpdateDate(new Date());
         watch.setArea(watchDTO.getArea());
         watch.setExpired(true);
+
+        watch.setHasAppraisalCertificate(watchDTO.isHasAppraisalCertificate());
+        if (watchDTO.isHasAppraisalCertificate()) {
+            MultipartFile appraisalCertificateFile = watchDTO.getAppraisalCertificateFile();
+            if (appraisalCertificateFile != null && !appraisalCertificateFile.isEmpty()) {
+                try {
+                    Map uploadResult = cloudinaryService.uploadFile(appraisalCertificateFile);
+                    String appraisalCertificateUrl = uploadResult.get("url").toString();
+                    watch.setAppraisalCertificateUrl(appraisalCertificateUrl);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to upload appraisal certificate", e);
+                }
+            }
+        }
 
         Watch savedWatch = watchRepository.save(watch);
 
@@ -298,6 +312,8 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setCreateDate(watch.getCreateDate());
         watchDTO.setUpdateDate(watch.getUpdateDate());
         watchDTO.setWatchTypeName(watch.getWatchType().getTypeName());
+        watchDTO.setHasAppraisalCertificate(watch.isHasAppraisalCertificate());
+        watchDTO.setAppraisalCertificateUrl(watch.getAppraisalCertificateUrl());
         return watchDTO;
     }
 
@@ -341,6 +357,9 @@ public class WatchServiceImpl implements WatchService {
         watchDTO.setEndDate(watch.getEndDate());
         watchDTO.setNumberDatePost(watch.getNumberDatePost());
         watchDTO.setTypePost(renewalPackageName);
+        watchDTO.setHasAppraisalCertificate(watch.isHasAppraisalCertificate());
+        watchDTO.setAppraisalCertificateUrl(watch.getAppraisalCertificateUrl());
+
 
         return watchDTO;
     }
@@ -354,21 +373,6 @@ public class WatchServiceImpl implements WatchService {
     }
 
 
-//    @Override
-//    public Page<SearchWatchDTO> searchWatches(Double price, String area, String type, String brand, String watchStatus, String status, String accessories, String name, Pageable pageable) {
-//        Page<Watch> watches = watchRepository.searchWatches(price, area, type, brand, watchStatus, status, accessories, name, pageable);
-//        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
-//                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
-//        return searchwatchDTOs;
-//    }
-//
-//    @Override
-//    public Page<SearchWatchDTO> searchWatchesByKeyword(String keyword, Pageable pageable) {
-//        Page<Watch> watches = watchRepository.searchWatchesByKeyword(keyword, pageable);
-//        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
-//                watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
-//        return searchwatchDTOs;
-//    }
 
     @Override
     public Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, String area,
@@ -396,6 +400,7 @@ public class WatchServiceImpl implements WatchService {
         searchWatchDTO.setSellerName(watch.getUser().getName());
         searchWatchDTO.setSellerImage(watch.getUser().getAvatar());
         searchWatchDTO.setCreateDate(watch.getCreateDate());
+        searchWatchDTO.setHasAppraisalCertificate(watch.isHasAppraisalCertificate());
         List<WatchImage> images = watch.getImages();
         if (images != null && !images.isEmpty()) {
             searchWatchDTO.setImageUrl(images.get(0).getImageUrl());
@@ -404,52 +409,6 @@ public class WatchServiceImpl implements WatchService {
         return searchWatchDTO;
     }
 
-//    @Transactional
-//    public WatchDTO makeWatchVip(Long id, int vipDays, Long userId, double vipFee) {
-//        Watch watch = watchRepository.findById(id).orElseThrow(() -> new RuntimeException("Watch not found"));
-//
-//        // Lấy thông tin người dùng từ UserService
-//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Lấy wallet của người dùng từ thông tin user
-//        Wallet wallet = user.getWallet();
-//
-//        // Kiểm tra và trừ tiền từ ví
-//        boolean withdrawSuccess = walletService.withdrawFromWallet(wallet.getId(), vipFee);
-//        if (!withdrawSuccess) {
-//            throw new RuntimeException("Withdrawal from wallet failed");
-//        }
-//
-//
-//        watch.setEndDate(calculateVipEndDate(vipDays));
-//        Watch savedWatch = watchRepository.save(watch);
-//
-//        // Tạo đối tượng WatchDTO từ savedWatch
-//        WatchDTO watchDTO = WatchDTO.builder()
-//                .id(savedWatch.getId())
-//                .userId(user.getId())
-//                .name(savedWatch.getName())
-//                .watchStatus(savedWatch.getWatchStatus())
-//                .status(savedWatch.getStatus())
-//                .description(savedWatch.getDescription())
-//                .price(savedWatch.getPrice())
-//                .brandName(savedWatch.getBrand().getBrandName()) // Thay vì savedWatch.getBrandName() nếu Brand là một entity
-//                .yearProduced(savedWatch.getYearProduced())
-//                .model(savedWatch.getModel())
-//                .material(savedWatch.getMaterial())
-//                .watchStrap(savedWatch.getWatchStrap())
-//                .size(savedWatch.getSize())
-//                .accessories(savedWatch.getAccessories())
-//                .referenceCode(savedWatch.getReferenceCode())
-//                .placeOfProduction(savedWatch.getPlaceOfProduction())
-//                .address(savedWatch.getAddress())
-//                .createDate(savedWatch.getCreateDate())
-//                .updateDate(savedWatch.getUpdateDate())
-//                .watchTypeName(savedWatch.getWatchType().getTypeName()) // Thay vì savedWatch.getWatchTypeName() nếu WatchType là một entity
-//                .build();
-//
-//        return watchDTO;
-//    }
 
     @Override
     @Transactional
@@ -512,7 +471,7 @@ public class WatchServiceImpl implements WatchService {
         renewalPackageDTO.setEndDate(watch.getEndDate());
         renewalPackageDTO.setNumberDatePost(watch.getNumberDatePost());
         renewalPackageDTO.setTypePost(watch.getRenewalPackage().getName());
-
+        renewalPackageDTO.setHasAppraisalCertificate(watch.isHasAppraisalCertificate());
 
         return renewalPackageDTO;
     }

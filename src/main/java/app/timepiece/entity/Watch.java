@@ -74,9 +74,12 @@ public class Watch {
 
     private Date updateDate;
 
-
-
     private String area;
+
+    private String appraisalCertificateUrl;
+
+    @Column(name = "has_appraisal_certificate", nullable = false)
+    private boolean hasAppraisalCertificate;
 
     @ManyToOne
     @JoinColumn(name = "watch_type_id", nullable = false)

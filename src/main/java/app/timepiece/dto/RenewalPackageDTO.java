@@ -14,6 +14,7 @@ public class RenewalPackageDTO {
     private String name;
     private String size;
     private double price;
+    private boolean hasAppraisalCertificate;
     private Date createDate;
     private String address;
     private String area;

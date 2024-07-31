@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,15 +18,11 @@ public class AppraisalRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
 
-    //@Email(message = "Email should be valid")
     @NotBlank(message = "Email is required")
     private String email;
 
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
-
-    @NotBlank(message = "Address is required")
-    private String address;
 
     @NotNull(message = "Has original box is required")
     private boolean hasOriginalBox;
@@ -56,5 +53,13 @@ public class AppraisalRequestDTO {
     @NotNull(message = "Image files are required")
     private List<MultipartFile> imageFiles;
 
+    @NotNull(message = "Appointment date is required")
+    private Date appointmentDate;
 
+    @NotNull(message = "Appointment time is required")
+    private String appointmentTime;
+
+    @NotBlank(message = "Appraisal location is required")
+    private String appraisalLocation;
 }
+

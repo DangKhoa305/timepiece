@@ -60,7 +60,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setUsername(appraisalRequestDTO.getName());
         appraisalRequest.setEmail(appraisalRequestDTO.getEmail());
         appraisalRequest.setPhoneNumber(appraisalRequestDTO.getPhoneNumber());
-        appraisalRequest.setAddress(appraisalRequestDTO.getAddress());
         appraisalRequest.setHasOriginalBox(appraisalRequestDTO.isHasOriginalBox());
         appraisalRequest.setHasPapersOrWarranty(appraisalRequestDTO.isHasPapersOrWarranty());
         appraisalRequest.setHasPurchaseReceipt(appraisalRequestDTO.isHasPurchaseReceipt());
@@ -73,6 +72,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setStatus("wait");
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
+        appraisalRequest.setAppointmentDate(appraisalRequestDTO.getAppointmentDate());
+        appraisalRequest.setAppointmentTime(appraisalRequestDTO.getAppointmentTime());
+        appraisalRequest.setAppraisalLocation(appraisalRequestDTO.getAppraisalLocation());
 
 
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
@@ -107,7 +109,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         return AppraisalRequestResponseDTO.builder()
                 .name(appraisalRequest.getUsername())
                 .email(appraisalRequest.getEmail())
-                .address(appraisalRequest.getAddress())
                 .phoneNumber(appraisalRequest.getPhoneNumber())
                 .hasOriginalBox(appraisalRequest.isHasOriginalBox())
                 .hasPapersOrWarranty(appraisalRequest.isHasPapersOrWarranty())
@@ -117,6 +118,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .desiredPrice(appraisalRequest.getDesiredPrice())
                 .description(appraisalRequest.getDescription())
                 .brand(appraisalRequest.getBrand())
+                .appointmentDate(appraisalRequest.getAppointmentDate())
+                .appointmentTime(appraisalRequest.getAppointmentTime())
+                .appraisalLocation(appraisalRequest.getAppraisalLocation())
                 .referenceCode(appraisalRequest.getReferenceCode())
                 .imageUrls(imageUrls)
                 .build();

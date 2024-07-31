@@ -14,6 +14,8 @@ public class WatchSellerDTO {
     private Long id;
     private String imageUrl;
     private String name;
+    private boolean hasAppraisalCertificate;
+    private String appraisalCertificateUrl;
     private String size;
     private String type;
     private String brand;

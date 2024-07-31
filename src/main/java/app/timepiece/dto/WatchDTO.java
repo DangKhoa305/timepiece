@@ -41,4 +41,6 @@ public class WatchDTO {
     private Date endDate;
     private int numberDatePost;
     private List<FeedbackDTO> feedbacks;
+    private boolean hasAppraisalCertificate;
+    private String appraisalCertificateUrl;
 }

@@ -27,4 +27,5 @@ public class ReportResponseDTO {
     private Date createDate;
     private String reportStatus;
     private List<String> imageUrls;
+    private String pdfUrl;
 }

@@ -16,7 +16,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -46,19 +49,22 @@ public class ReportController {
 
     @PreAuthorize("hasRole('Appraiser') or hasRole('Admin')")
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, String>> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errors = bindingResult.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(Collectors.joining("\n"));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Validation errors:\n" + errors));
         }
         try {
             Report report = reportService.createReport(reportDTO);
             String pdfUrl = report.getPdfUrl();
-            return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Report successfully. Download PDF from: " + pdfUrl);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Create Appraisal Report successfully.");
+            response.put("pdfUrl", pdfUrl);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 

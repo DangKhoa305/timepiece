@@ -52,9 +52,6 @@ public class ReportServiceImpl implements ReportService {
         User user = userRepository.findById(reportDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-//        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(reportDTO.getAppraisalRequestId())
-//                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
-
         Report report = new Report();
         report.setUser(user);
         report.setBrand(reportDTO.getBrand());
@@ -65,7 +62,7 @@ public class ReportServiceImpl implements ReportService {
         report.setWatchStrap(reportDTO.getWatchStrap());
         report.setYearProduced(reportDTO.getYearProduced());
         report.setWatchStatus(reportDTO.getWatchStatus());
-        report.setReportStatus("true");
+        report.setReportStatus("SHOW");
         report.setAccessories(reportDTO.getAccessories());
         report.setOrigin(reportDTO.getOrigin());
         report.setSize(reportDTO.getSize());
@@ -137,6 +134,7 @@ public class ReportServiceImpl implements ReportService {
                 .commentValue(report.getCommentValue())
                 .reportStatus(report.getReportStatus())
                 .imageUrls(imageUrls)
+                .pdfUrl(report.getPdfUrl())
                 .build();
     }
 

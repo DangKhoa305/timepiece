@@ -1,6 +1,8 @@
 package app.timepiece.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,6 @@ public class AppraisalRequest {
     private String username;
     private String email;
     private String phoneNumber;
-    private String address;
     private boolean hasOriginalBox;
     private boolean hasPapersOrWarranty;
     private boolean hasPurchaseReceipt;
@@ -41,7 +42,7 @@ public class AppraisalRequest {
     private String brand;
 
     @Column(nullable = false)
-    private String referenceCode ;
+    private String referenceCode;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -54,4 +55,13 @@ public class AppraisalRequest {
 //    @OneToOne(mappedBy = "appraisalRequest")
 //    private Report report;
     private String pdfUrl;
+
+    @NotNull
+    private Date appointmentDate;
+
+    @NotNull
+    private String appointmentTime;
+
+    @NotBlank
+    private String appraisalLocation;
 }

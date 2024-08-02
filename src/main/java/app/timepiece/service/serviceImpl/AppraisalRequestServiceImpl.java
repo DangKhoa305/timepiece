@@ -60,7 +60,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setUsername(appraisalRequestDTO.getName());
         appraisalRequest.setEmail(appraisalRequestDTO.getEmail());
         appraisalRequest.setPhoneNumber(appraisalRequestDTO.getPhoneNumber());
-        appraisalRequest.setAddress(appraisalRequestDTO.getAddress());
         appraisalRequest.setHasOriginalBox(appraisalRequestDTO.isHasOriginalBox());
         appraisalRequest.setHasPapersOrWarranty(appraisalRequestDTO.isHasPapersOrWarranty());
         appraisalRequest.setHasPurchaseReceipt(appraisalRequestDTO.isHasPurchaseReceipt());
@@ -73,6 +72,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setStatus("wait");
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
+        appraisalRequest.setAppointmentDate(appraisalRequestDTO.getAppointmentDate());
+        appraisalRequest.setAppointmentTime(appraisalRequestDTO.getAppointmentTime());
+        appraisalRequest.setAppraisalLocation(appraisalRequestDTO.getAppraisalLocation());
 
 
         AppraisalRequest savedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
@@ -105,9 +107,9 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
         // Create and return the DTO
         return AppraisalRequestResponseDTO.builder()
+                .id(appraisalRequest.getId())
                 .name(appraisalRequest.getUsername())
                 .email(appraisalRequest.getEmail())
-                .address(appraisalRequest.getAddress())
                 .phoneNumber(appraisalRequest.getPhoneNumber())
                 .hasOriginalBox(appraisalRequest.isHasOriginalBox())
                 .hasPapersOrWarranty(appraisalRequest.isHasPapersOrWarranty())
@@ -117,8 +119,13 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .desiredPrice(appraisalRequest.getDesiredPrice())
                 .description(appraisalRequest.getDescription())
                 .brand(appraisalRequest.getBrand())
+                .appointmentDate(appraisalRequest.getAppointmentDate())
+                .appointmentTime(appraisalRequest.getAppointmentTime())
+                .appraisalLocation(appraisalRequest.getAppraisalLocation())
                 .referenceCode(appraisalRequest.getReferenceCode())
                 .imageUrls(imageUrls)
+                .status(appraisalRequest.getStatus())
+                .pdfUrl(appraisalRequest.getPdfUrl())
                 .build();
     }
 
@@ -175,11 +182,11 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     @Override
     @Transactional
-    public Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId) {
+    public Boolean updateStatusAndAppraiser(Long id, Long appraiserId) {
         Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             AppraisalRequest request = optionalRequest.get();
-            request.setStatus(newStatus);
+            request.setStatus("processing");
             request.setUpdateDate(new Date());
 
             // Assign the appraiser if appraiserId is provided
@@ -209,35 +216,43 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
     }
 
-//    public AppraisalRequestResponseDTO updatePdfUrlAndStatus(Long appraisalRequestId, String pdfUrl) {
-//        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(appraisalRequestId)
-//                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
-//
-//        // Cập nhật pdfUrl và status
-//        appraisalRequest.setPdfUrl(pdfUrl);
-//        appraisalRequest.setStatus("complete");
-//        AppraisalRequest updatedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
-//
-//        // Chuyển đổi thành DTO với tất cả các trường
-//        return new AppraisalRequestResponseDTO(
-//                updatedAppraisalRequest.getId(),
-//                updatedAppraisalRequest.getUsername(),
-//                updatedAppraisalRequest.getEmail(),
-//                updatedAppraisalRequest.getPhoneNumber(),
-//                updatedAppraisalRequest.getAddress(),
-//                updatedAppraisalRequest.isHasOriginalBox(),
-//                updatedAppraisalRequest.isHasPapersOrWarranty(),
-//                updatedAppraisalRequest.isHasPurchaseReceipt(),
-//                updatedAppraisalRequest.isAreThereAnyStickers(),
-//                updatedAppraisalRequest.getAge(),
-//                updatedAppraisalRequest.getStatus(),
-//                updatedAppraisalRequest.getCreateDate(),
-//                updatedAppraisalRequest.getUpdateDate(),
-//                updatedAppraisalRequest.getDesiredPrice(),
-//                updatedAppraisalRequest.getDescription(),
-//                updatedAppraisalRequest.getBrand(),
-//                updatedAppraisalRequest.getReferenceCode(),
-//                updatedAppraisalRequest.getPdfUrl()
-//        );
-//    }
+    @Override
+    public AppraisalRequestResponseDTO updatePdfUrlAndStatus(Long appraisalRequestId, String pdfUrl) {
+        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(appraisalRequestId)
+                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
+
+        // Cập nhật pdfUrl và status
+        appraisalRequest.setPdfUrl(pdfUrl);
+        appraisalRequest.setStatus("complete");
+        AppraisalRequest updatedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
+
+        // Lấy danh sách hình ảnh liên quan
+        List<RequestImage> requestImages = requestImageRepository.findByAppraisalRequestId(appraisalRequestId);
+        List<String> imageUrls = requestImages.stream()
+                .map(RequestImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        // Chuyển đổi thành DTO với tất cả các trường
+        return AppraisalRequestResponseDTO.builder()
+                .id(updatedAppraisalRequest.getId())
+                .name(updatedAppraisalRequest.getUsername())
+                .email(updatedAppraisalRequest.getEmail())
+                .phoneNumber(updatedAppraisalRequest.getPhoneNumber())
+                .hasOriginalBox(updatedAppraisalRequest.isHasOriginalBox())
+                .hasPapersOrWarranty(updatedAppraisalRequest.isHasPapersOrWarranty())
+                .hasPurchaseReceipt(updatedAppraisalRequest.isHasPurchaseReceipt())
+                .arethereanystickers(updatedAppraisalRequest.isArethereanystickers())
+                .age(updatedAppraisalRequest.getAge())
+                .desiredPrice(updatedAppraisalRequest.getDesiredPrice())
+                .description(updatedAppraisalRequest.getDescription())
+                .brand(updatedAppraisalRequest.getBrand())
+                .referenceCode(updatedAppraisalRequest.getReferenceCode())
+                .imageUrls(imageUrls)
+                .appointmentDate(updatedAppraisalRequest.getAppointmentDate())
+                .appointmentTime(updatedAppraisalRequest.getAppointmentTime())
+                .appraisalLocation(updatedAppraisalRequest.getAppraisalLocation())
+                .status(updatedAppraisalRequest.getStatus())
+                .pdfUrl(updatedAppraisalRequest.getPdfUrl())
+                .build();
+    }
 }

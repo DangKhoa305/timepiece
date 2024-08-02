@@ -42,9 +42,6 @@ public class User {
     private Set<Order> orders;
 
     @OneToMany(mappedBy = "user")
-    private Set<ChatLog> chatLogs;
-
-    @OneToMany(mappedBy = "user")
     private Set<Report> reports;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -71,13 +71,12 @@ public class AppraisalRequestController {
         return ResponseEntity.ok("Status updated successfully");
     }
 
-    @PutMapping("/{id}/updateStatus")
+    @PutMapping("/{id}/accept-requests")
     public ResponseEntity<String> updateStatusAndAppraiser(
             @PathVariable Long id,
-            @RequestParam String newStatus,
             @RequestParam(required = false) Long appraiserId) {
 
-        Boolean updated = appraisalRequestService.updateStatusAndAppraiser(id, newStatus, appraiserId);
+        Boolean updated = appraisalRequestService.updateStatusAndAppraiser(id, appraiserId);
         if (updated) {
             return ResponseEntity.ok("AppraisalRequest updated successfully");
         } else {
@@ -91,5 +90,16 @@ public class AppraisalRequestController {
         Pageable pageable = PageRequest.of(page, size);
         Page<AppraisalRequestListDTO> appraisalRequests = appraisalRequestService.getAllAppraisalRequestsByUser(userId, pageable);
         return ResponseEntity.ok(appraisalRequests);
+    }
+
+    @PreAuthorize("hasRole('Appraiser') or hasRole('Admin')")
+    @PostMapping(value = "/complete-request/{id}")
+    public ResponseEntity<AppraisalRequestResponseDTO> updatePdfUrl(@PathVariable Long id, @RequestParam String pdfUrl) {
+        try {
+            AppraisalRequestResponseDTO responseDTO = appraisalRequestService.updatePdfUrlAndStatus(id, pdfUrl);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

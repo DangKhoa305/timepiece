@@ -16,5 +16,6 @@ public interface AppraisalRequestService {
     Page<AppraisalRequestListDTO> getAllAppraisalRequestsByStatusAndAppraiser(String status, Long appraiserId, Pageable pageable);
     Page<AppraisalRequestListDTO> getAllAppraisalRequestsByUser(Long userId, Pageable pageable);
     @Transactional
-    Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId);
+    Boolean updateStatusAndAppraiser(Long id, Long appraiserId);
+    AppraisalRequestResponseDTO updatePdfUrlAndStatus(Long appraisalRequestId, String pdfUrl);
 }

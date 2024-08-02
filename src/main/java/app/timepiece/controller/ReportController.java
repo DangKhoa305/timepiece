@@ -3,6 +3,7 @@ package app.timepiece.controller;
 import app.timepiece.dto.ReportDTO;
 import app.timepiece.dto.ReportResponseDTO;
 import app.timepiece.dto.SearchReportDTO;
+import app.timepiece.entity.Report;
 import app.timepiece.service.ReportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -26,20 +30,41 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
+//    @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
+//    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+//    public ResponseEntity<String> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            String errors = bindingResult.getFieldErrors().stream()
+//                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+//                    .collect(Collectors.joining("\n"));
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+//        }
+//        try {
+//            reportService.createReport(reportDTO);
+//            return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Report successfully ");
+//        } catch (Error e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
+
+    @PreAuthorize("hasRole('Appraiser') or hasRole('Admin')")
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, String>> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errors = bindingResult.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(Collectors.joining("\n"));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", "Validation errors:\n" + errors));
         }
         try {
-            reportService.createReport(reportDTO);
-            return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Report successfully ");
-        } catch (Error e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            Report report = reportService.createReport(reportDTO);
+            String pdfUrl = report.getPdfUrl();
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Create Appraisal Report successfully.");
+            response.put("pdfUrl", pdfUrl);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 

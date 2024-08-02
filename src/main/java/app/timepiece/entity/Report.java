@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -66,7 +67,12 @@ public class Report {
     @Column(nullable = false)
     private String reportStatus;
 
-    @OneToOne
-    @JoinColumn(name = "appraisal_request_id", referencedColumnName = "id")
-    private AppraisalRequest appraisalRequest;
+//    @OneToOne
+//    @JoinColumn(name = "appraisal_request_id", referencedColumnName = "id")
+//    private AppraisalRequest appraisalRequest;
+
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ReportImage> reportImages;
+
+    private String pdfUrl;
 }

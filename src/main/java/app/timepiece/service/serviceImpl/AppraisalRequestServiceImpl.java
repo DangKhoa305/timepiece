@@ -107,6 +107,7 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
         // Create and return the DTO
         return AppraisalRequestResponseDTO.builder()
+                .id(appraisalRequest.getId())
                 .name(appraisalRequest.getUsername())
                 .email(appraisalRequest.getEmail())
                 .phoneNumber(appraisalRequest.getPhoneNumber())
@@ -123,6 +124,8 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .appraisalLocation(appraisalRequest.getAppraisalLocation())
                 .referenceCode(appraisalRequest.getReferenceCode())
                 .imageUrls(imageUrls)
+                .status(appraisalRequest.getStatus())
+                .pdfUrl(appraisalRequest.getPdfUrl())
                 .build();
     }
 
@@ -179,11 +182,11 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
 
     @Override
     @Transactional
-    public Boolean updateStatusAndAppraiser(Long id, String newStatus, Long appraiserId) {
+    public Boolean updateStatusAndAppraiser(Long id, Long appraiserId) {
         Optional<AppraisalRequest> optionalRequest = appraisalRequestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             AppraisalRequest request = optionalRequest.get();
-            request.setStatus(newStatus);
+            request.setStatus("processing");
             request.setUpdateDate(new Date());
 
             // Assign the appraiser if appraiserId is provided
@@ -211,5 +214,45 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
+    }
+
+    @Override
+    public AppraisalRequestResponseDTO updatePdfUrlAndStatus(Long appraisalRequestId, String pdfUrl) {
+        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(appraisalRequestId)
+                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
+
+        // Cập nhật pdfUrl và status
+        appraisalRequest.setPdfUrl(pdfUrl);
+        appraisalRequest.setStatus("complete");
+        AppraisalRequest updatedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
+
+        // Lấy danh sách hình ảnh liên quan
+        List<RequestImage> requestImages = requestImageRepository.findByAppraisalRequestId(appraisalRequestId);
+        List<String> imageUrls = requestImages.stream()
+                .map(RequestImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        // Chuyển đổi thành DTO với tất cả các trường
+        return AppraisalRequestResponseDTO.builder()
+                .id(updatedAppraisalRequest.getId())
+                .name(updatedAppraisalRequest.getUsername())
+                .email(updatedAppraisalRequest.getEmail())
+                .phoneNumber(updatedAppraisalRequest.getPhoneNumber())
+                .hasOriginalBox(updatedAppraisalRequest.isHasOriginalBox())
+                .hasPapersOrWarranty(updatedAppraisalRequest.isHasPapersOrWarranty())
+                .hasPurchaseReceipt(updatedAppraisalRequest.isHasPurchaseReceipt())
+                .arethereanystickers(updatedAppraisalRequest.isArethereanystickers())
+                .age(updatedAppraisalRequest.getAge())
+                .desiredPrice(updatedAppraisalRequest.getDesiredPrice())
+                .description(updatedAppraisalRequest.getDescription())
+                .brand(updatedAppraisalRequest.getBrand())
+                .referenceCode(updatedAppraisalRequest.getReferenceCode())
+                .imageUrls(imageUrls)
+                .appointmentDate(updatedAppraisalRequest.getAppointmentDate())
+                .appointmentTime(updatedAppraisalRequest.getAppointmentTime())
+                .appraisalLocation(updatedAppraisalRequest.getAppraisalLocation())
+                .status(updatedAppraisalRequest.getStatus())
+                .pdfUrl(updatedAppraisalRequest.getPdfUrl())
+                .build();
     }
 }

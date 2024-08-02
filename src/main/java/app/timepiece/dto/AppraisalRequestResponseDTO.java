@@ -14,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AppraisalRequestResponseDTO {
+        private Long id;
         private String name;
         private String email;
         private String phoneNumber;
-        private String address;
         private boolean hasOriginalBox;
         private boolean hasPapersOrWarranty;
         private boolean hasPurchaseReceipt;
@@ -31,4 +31,6 @@ public class AppraisalRequestResponseDTO {
         private Date appointmentDate;
         private String appointmentTime;
         private String appraisalLocation;
+        private String status;
+        private String pdfUrl;
     }

@@ -54,6 +54,6 @@ public class ReportDTO {
     @NotNull(message = "Image files are required")
     private List<MultipartFile> imageFiles;
 
-    @NotNull(message = "Appraisal request ID is required")
-    private Long appraisalRequestId;
+//    @NotNull(message = "Appraisal request ID is required")
+//    private Long appraisalRequestId;
 }

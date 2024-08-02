@@ -18,6 +18,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,13 +44,16 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private AppraisalRequestRepository appraisalRequestRepository;
 
+    @Autowired
+    private PdfService pdfService;
+
     @Override
     public Report createReport(ReportDTO reportDTO) {
         User user = userRepository.findById(reportDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(reportDTO.getAppraisalRequestId())
-                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
+//        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(reportDTO.getAppraisalRequestId())
+//                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
 
         Report report = new Report();
         report.setUser(user);
@@ -65,7 +71,6 @@ public class ReportServiceImpl implements ReportService {
         report.setSize(reportDTO.getSize());
         report.setCreateDate(new Date());
         report.setCommentValue(reportDTO.getCommentValue());
-        report.setAppraisalRequest(appraisalRequest);
 
         Report savedReport = reportRepository.save(report);
 
@@ -80,6 +85,24 @@ public class ReportServiceImpl implements ReportService {
             } catch (Exception e) {
                 throw new Error(e);
             }
+        }
+
+        // Export report to PDF
+        ByteArrayInputStream pdfStream = pdfService.exportReportToPdf(savedReport);
+        if (pdfStream.available() == 0) {
+            throw new RuntimeException("PDF generation failed");
+        }
+        // Upload PDF to Cloudinary
+        String fileName = "Report_" + savedReport.getId();
+        try {
+            Map uploadResult = cloudinaryService.uploadPdf(pdfStream, fileName);
+            String pdfUrl = uploadResult.get("secure_url").toString();
+
+            savedReport.setPdfUrl(pdfUrl);
+            reportRepository.save(savedReport);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to upload PDF", e);
         }
 
         return savedReport;

@@ -51,7 +51,7 @@ public class AppraisalRequest {
     @JoinColumn(name = "appraiser_id")
     private User appraiser;
 
-    @OneToOne(mappedBy = "appraisalRequest")
-    private Report report;
-
+//    @OneToOne(mappedBy = "appraisalRequest")
+//    private Report report;
+    private String pdfUrl;
 }

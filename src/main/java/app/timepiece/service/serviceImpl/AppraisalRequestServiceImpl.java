@@ -208,4 +208,36 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .collect(Collectors.toList());
         return new PageImpl<>(appraisalRequestsList, pageable, appraisalRequestsPage.getTotalElements());
     }
+
+//    public AppraisalRequestResponseDTO updatePdfUrlAndStatus(Long appraisalRequestId, String pdfUrl) {
+//        AppraisalRequest appraisalRequest = appraisalRequestRepository.findById(appraisalRequestId)
+//                .orElseThrow(() -> new RuntimeException("AppraisalRequest not found"));
+//
+//        // Cập nhật pdfUrl và status
+//        appraisalRequest.setPdfUrl(pdfUrl);
+//        appraisalRequest.setStatus("complete");
+//        AppraisalRequest updatedAppraisalRequest = appraisalRequestRepository.save(appraisalRequest);
+//
+//        // Chuyển đổi thành DTO với tất cả các trường
+//        return new AppraisalRequestResponseDTO(
+//                updatedAppraisalRequest.getId(),
+//                updatedAppraisalRequest.getUsername(),
+//                updatedAppraisalRequest.getEmail(),
+//                updatedAppraisalRequest.getPhoneNumber(),
+//                updatedAppraisalRequest.getAddress(),
+//                updatedAppraisalRequest.isHasOriginalBox(),
+//                updatedAppraisalRequest.isHasPapersOrWarranty(),
+//                updatedAppraisalRequest.isHasPurchaseReceipt(),
+//                updatedAppraisalRequest.isAreThereAnyStickers(),
+//                updatedAppraisalRequest.getAge(),
+//                updatedAppraisalRequest.getStatus(),
+//                updatedAppraisalRequest.getCreateDate(),
+//                updatedAppraisalRequest.getUpdateDate(),
+//                updatedAppraisalRequest.getDesiredPrice(),
+//                updatedAppraisalRequest.getDescription(),
+//                updatedAppraisalRequest.getBrand(),
+//                updatedAppraisalRequest.getReferenceCode(),
+//                updatedAppraisalRequest.getPdfUrl()
+//        );
+//    }
 }

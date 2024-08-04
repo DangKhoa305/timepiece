@@ -32,7 +32,6 @@ public class Watch {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)

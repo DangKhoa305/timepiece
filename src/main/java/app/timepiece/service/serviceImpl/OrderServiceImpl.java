@@ -63,6 +63,11 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = userOptional.get();
 
+        Optional<Order> existingOrder = orderRepository.findByUserIdAndWatchId(userId, watchId);
+        if (existingOrder.isPresent()) {
+            throw new IllegalArgumentException("User has already placed an order for this watch.");
+        }
+
         double productPrice = watch.getPrice();
         double surchargePercent = 0.05;
         double surcharge = productPrice * surchargePercent;

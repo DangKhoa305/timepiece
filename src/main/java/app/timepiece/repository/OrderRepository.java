@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -14,4 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.watch.user.id = :sellerId")
     List<Order> findOrdersBySellerId(@Param("sellerId") Long sellerId);
+
+    Optional<Order> findByUserIdAndWatchId(Long userId, Long watchId);
 }

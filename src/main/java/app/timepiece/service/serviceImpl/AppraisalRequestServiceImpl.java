@@ -73,7 +73,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
         appraisalRequest.setCreateDate(new Date());
         appraisalRequest.setUpdateDate(new Date());
         appraisalRequest.setAppointmentDate(appraisalRequestDTO.getAppointmentDate());
-        appraisalRequest.setAppointmentTime(appraisalRequestDTO.getAppointmentTime());
         appraisalRequest.setAppraisalLocation(appraisalRequestDTO.getAppraisalLocation());
 
 
@@ -120,7 +119,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .description(appraisalRequest.getDescription())
                 .brand(appraisalRequest.getBrand())
                 .appointmentDate(appraisalRequest.getAppointmentDate())
-                .appointmentTime(appraisalRequest.getAppointmentTime())
                 .appraisalLocation(appraisalRequest.getAppraisalLocation())
                 .referenceCode(appraisalRequest.getReferenceCode())
                 .imageUrls(imageUrls)
@@ -249,7 +247,6 @@ public class AppraisalRequestServiceImpl implements AppraisalRequestService {
                 .referenceCode(updatedAppraisalRequest.getReferenceCode())
                 .imageUrls(imageUrls)
                 .appointmentDate(updatedAppraisalRequest.getAppointmentDate())
-                .appointmentTime(updatedAppraisalRequest.getAppointmentTime())
                 .appraisalLocation(updatedAppraisalRequest.getAppraisalLocation())
                 .status(updatedAppraisalRequest.getStatus())
                 .pdfUrl(updatedAppraisalRequest.getPdfUrl())

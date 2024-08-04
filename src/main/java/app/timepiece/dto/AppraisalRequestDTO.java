@@ -3,6 +3,7 @@ package app.timepiece.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -54,10 +55,9 @@ public class AppraisalRequestDTO {
     private List<MultipartFile> imageFiles;
 
     @NotNull(message = "Appointment date is required")
+    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date appointmentDate;
 
-    @NotNull(message = "Appointment time is required")
-    private String appointmentTime;
 
     @NotBlank(message = "Appraisal location is required")
     private String appraisalLocation;

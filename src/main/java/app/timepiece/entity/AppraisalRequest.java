@@ -59,9 +59,6 @@ public class AppraisalRequest {
     @NotNull
     private Date appointmentDate;
 
-    @NotNull
-    private String appointmentTime;
-
     @NotBlank
     private String appraisalLocation;
 }

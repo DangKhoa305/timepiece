@@ -29,7 +29,6 @@ public class AppraisalRequestResponseDTO {
         private String referenceCode;
         private List<String> imageUrls;
         private Date appointmentDate;
-        private String appointmentTime;
         private String appraisalLocation;
         private String status;
         private String pdfUrl;

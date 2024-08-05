@@ -139,21 +139,31 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
 
         WatchSellerDTO watchSellerDTO = WatchSellerDTO.builder()
-                .imageUrl(watchImages.isEmpty() ? null : watchImages.get(0)) // Chọn hình ảnh đầu tiên hoặc null nếu không có hình ảnh
+                .id(order.getWatch().getId())
+                .imageUrl(watchImages.isEmpty() ? null : watchImages.get(0))
                 .name(order.getWatch().getName())
+                .hasAppraisalCertificate(order.getWatch().isHasAppraisalCertificate())
+                .appraisalCertificateUrl(order.getWatch().getAppraisalCertificateUrl())
                 .size(order.getWatch().getSize())
                 .price(order.getWatch().getPrice())
                 .createDate(order.getWatch().getCreateDate())
                 .address(order.getWatch().getAddress())
-                .area((order.getWatch().getArea()))
+                .area(order.getWatch().getArea())
                 .status(order.getWatch().getStatus())
                 .type(order.getWatch().getWatchType().getTypeName())
                 .brand(order.getWatch().getBrand().getBrandName())
+                .startDate(order.getWatch().getStartDate())
+                .typePost(order.getWatch().getRenewalPackage() != null
+                        ? order.getWatch().getRenewalPackage().getName()
+                        : "Đăng tin bình thường")
+                .numberDatePost(order.getWatch().getNumberDatePost())
+                .endDate(order.getWatch().getEndDate())
                 .build();
 
         UserDTO sellerDTO = UserDTO.builder()
                 .id(order.getWatch().getUser().getId())
                 .name(order.getWatch().getUser().getName())
+                .email(order.getWatch().getUser().getAccount().getEmail())
                 .address(order.getWatch().getUser().getAddress())
                 .avatar(order.getWatch().getUser().getAvatar())
                 .phoneNumber(order.getWatch().getUser().getPhoneNumber())
@@ -167,6 +177,7 @@ public class OrderServiceImpl implements OrderService {
         UserDTO buyerDTO = UserDTO.builder()
                 .id(order.getUser().getId())
                 .name(order.getUser().getName())
+                .email(order.getUser().getAccount().getEmail())
                 .address(order.getUser().getAddress())
                 .avatar(order.getUser().getAvatar())
                 .phoneNumber(order.getUser().getPhoneNumber())
@@ -187,6 +198,7 @@ public class OrderServiceImpl implements OrderService {
                 .seller(sellerDTO)
                 .buyer(buyerDTO)
                 .buyeraddress(order.getBuyeraddress())
+                .paymentMethod(order.getPaymentMethod())
                 .build();
     }
 

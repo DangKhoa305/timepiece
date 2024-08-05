@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -47,6 +48,8 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private PdfService pdfService;
 
+
+    @Transactional
     @Override
     public Report createReport(ReportDTO reportDTO) {
         User user = userRepository.findById(reportDTO.getUserId())
@@ -83,6 +86,9 @@ public class ReportServiceImpl implements ReportService {
                 throw new Error(e);
             }
         }
+
+        savedReport.setReportImages(reportImageRepository.findByReportId(savedReport.getId()));
+        reportRepository.save(savedReport);
 
         // Export report to PDF
         ByteArrayInputStream pdfStream = pdfService.exportReportToPdf(savedReport);

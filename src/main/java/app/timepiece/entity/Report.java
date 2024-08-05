@@ -71,7 +71,7 @@ public class Report {
 //    @JoinColumn(name = "appraisal_request_id", referencedColumnName = "id")
 //    private AppraisalRequest appraisalRequest;
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<ReportImage> reportImages;
 
     private String pdfUrl;

@@ -226,6 +226,7 @@ public class UserServiceImpl implements UserService {
                 .dateCreate(new Date())
                 .gender(createUser.getGender())
                 .birthday(createUser.getBirthday())
+                .status("true")
                 .account(account)
                 .build();
 

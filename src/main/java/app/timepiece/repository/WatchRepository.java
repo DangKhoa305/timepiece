@@ -59,22 +59,22 @@ public interface WatchRepository extends JpaRepository<Watch, Long> {
             "(:keyword IS NULL OR w.name LIKE %:keyword% OR w.brand.brandName LIKE %:keyword% OR w.watchType.typeName LIKE %:keyword%) AND " +
             "(:minPrice IS NULL OR w.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR w.price <= :maxPrice) AND " +
-            "(:area IS NULL OR w.area LIKE %:area%) AND " +
-            "(:type IS NULL OR w.watchType.typeName = :type) AND " +
-            "(:brand IS NULL OR w.brand.brandName = :brand) AND " +
-            "(:watchStatus IS NULL OR w.watchStatus = :watchStatus) AND " +
+            "(:areaList IS NULL OR w.area IN :areaList) AND " +
+            "(:typeList IS NULL OR w.watchType.typeName IN :typeList) AND " +
+            "(:brandList IS NULL OR w.brand.brandName IN :brandList) AND " +
+            "(:watchStatusList IS NULL OR w.watchStatus IN :watchStatusList) AND " +
             "(:status IS NULL OR w.status = :status) AND " +
-            "(:accessories IS NULL OR w.accessories LIKE %:accessories%) AND " +
+            "(:accessoriesList IS NULL OR w.accessories IN :accessoriesList) AND " +
             "(:name IS NULL OR w.name LIKE %:name%)")
     Page<Watch> searchByKeywordAndFilter(@Param("keyword") String keyword,
                                          @Param("minPrice") Double minPrice,
                                          @Param("maxPrice") Double maxPrice,
-                                         @Param("area") String area,
-                                         @Param("type") String type,
-                                         @Param("brand") String brand,
-                                         @Param("watchStatus") String watchStatus,
+                                         @Param("areaList") List<String> areaList,
+                                         @Param("typeList") List<String> typeList,
+                                         @Param("brandList") List<String> brandList,
+                                         @Param("watchStatusList") List<String> watchStatusList,
                                          @Param("status") String status,
-                                         @Param("accessories") String accessories,
+                                         @Param("accessoriesList") List<String> accessoriesList,
                                          @Param("name") String name,
                                          Pageable pageable);
 

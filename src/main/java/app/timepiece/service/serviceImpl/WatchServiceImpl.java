@@ -375,13 +375,13 @@ public class WatchServiceImpl implements WatchService {
 
 
     @Override
-    public Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, String area,
-                                                                String type, String brand, String watchStatus, String status,
-                                                                String accessories, String name, Pageable pageable) {
-        Page<Watch> watches = watchRepository.searchByKeywordAndFilter(keyword, minPrice, maxPrice, area, type, brand, watchStatus, status, accessories, name, pageable);
-        Page<SearchWatchDTO> searchwatchDTOs = new PageImpl<>(
+    public Page<SearchWatchDTO> searchWatchesByKeywordAndFilter(String keyword, Double minPrice, Double maxPrice, List<String> areaList,
+                                                                List<String> typeList, List<String> brandList, List<String> watchStatusList,
+                                                                String status, List<String> accessoriesList, String name, Pageable pageable) {
+        Page<Watch> watches = watchRepository.searchByKeywordAndFilter(keyword, minPrice, maxPrice, areaList, typeList, brandList, watchStatusList, status, accessoriesList, name, pageable);
+        Page<SearchWatchDTO> searchWatchDTOs = new PageImpl<>(
                 watches.stream().map(this::convertToSearchWatchDTO).collect(Collectors.toList()), pageable, watches.getTotalElements());
-        return searchwatchDTOs;
+        return searchWatchDTOs;
     }
 
     private SearchWatchDTO convertToSearchWatchDTO(Watch watch) {
@@ -408,6 +408,7 @@ public class WatchServiceImpl implements WatchService {
 
         return searchWatchDTO;
     }
+
 
 
     @Override

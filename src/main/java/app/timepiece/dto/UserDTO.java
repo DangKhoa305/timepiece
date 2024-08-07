@@ -21,4 +21,5 @@ public class UserDTO {
     private String birthday;
     private String citizenID;
     private String status;
+    private String role;
 }

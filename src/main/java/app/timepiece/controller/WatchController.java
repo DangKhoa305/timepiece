@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -142,7 +143,7 @@ public class WatchController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String area,
             @RequestParam(required = false) String type,
-            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String brands,
             @RequestParam(required = false) String watchStatus,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String accessories,
@@ -151,8 +152,14 @@ public class WatchController {
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        return watchService.searchWatchesByKeywordAndFilter(keyword, minPrice, maxPrice, area, type, brand, watchStatus,
-                status, accessories, name, pageable);
+
+        List<String> areaList = (area != null) ? Arrays.asList(area.split(",")) : null;
+        List<String> typeList = (type != null) ? Arrays.asList(type.split(",")) : null;
+        List<String> brandList = (brands != null) ? Arrays.asList(brands.split(",")) : null;
+        List<String> watchStatusList = (watchStatus != null) ? Arrays.asList(watchStatus.split(",")) : null;
+        List<String> accessoriesList = (accessories != null) ? Arrays.asList(accessories.split(",")) : null;
+
+        return watchService.searchWatchesByKeywordAndFilter(keyword, minPrice, maxPrice, areaList, typeList, brandList, watchStatusList, status, accessoriesList, name, pageable);
     }
 
     @PostMapping("/{id}/renew")

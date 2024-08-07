@@ -5,10 +5,7 @@ import app.timepiece.entity.Account;
 import app.timepiece.entity.Role;
 import app.timepiece.entity.User;
 import app.timepiece.entity.Wallet;
-import app.timepiece.repository.AccountRepository;
-import app.timepiece.repository.RoleRepository;
-import app.timepiece.repository.UserRepository;
-import app.timepiece.repository.WalletRepository;
+import app.timepiece.repository.*;
 import app.timepiece.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @Autowired
     private WalletRepository walletRepository;
@@ -126,6 +126,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserDTO convertToDTO(User user) {
+
+
+       Long feedbacks = feedbackRepository.countBySellerId(user.getId());
+
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
@@ -139,6 +143,8 @@ public class UserServiceImpl implements UserService {
         userDTO.setBirthday(user.getBirthday());
         userDTO.setCitizenID(user.getCitizenID());
         userDTO.setRole(user.getRole().getRoleName());
+        userDTO.setRatingScore(user.getRatingScore());
+        userDTO.setFeedbacks(feedbacks);
         return userDTO;
     }
 

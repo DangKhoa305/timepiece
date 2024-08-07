@@ -22,4 +22,6 @@ public class UserDTO {
     private String citizenID;
     private String status;
     private String role;
+    private Double ratingScore;
+    private Long feedbacks;
 }

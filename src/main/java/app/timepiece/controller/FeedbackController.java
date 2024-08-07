@@ -29,9 +29,15 @@ public class FeedbackController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Feedback>> getAllFeedbacks() {
-        return ResponseEntity.ok(feedbackService.getAllFeedbacks());
+    public ResponseEntity<?> getAllFeedbacks() {
+        try {
+            List<FeedbackDTO> savedFeedback = feedbackService.getAllFeedbacks();
+            return ResponseEntity.ok(savedFeedback);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<FeedbackDTO> getFeedbackById(@PathVariable Long id) {
@@ -67,6 +73,16 @@ public class FeedbackController {
             return ResponseEntity.ok(feedbackList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    public ResponseEntity<?> getFeedbacksBySellerId(@PathVariable Long sellerId) {
+        try {
+            List<FeedbackDTO> feedbacks = feedbackService.getFeedbacksBySellerId(sellerId);
+            return ResponseEntity.ok(feedbacks);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

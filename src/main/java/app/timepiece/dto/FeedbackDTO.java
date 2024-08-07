@@ -12,10 +12,12 @@ public class FeedbackDTO {
     private Long id;
     private String comment;
     private String timestamp;
+    private Long userId;
     private String userName;
     private String avatar;
     private Double rating;
     private Long orderId;
     private Long parentFeedbackId;
     private List<FeedbackDTO> childFeedbacks;
+    private ShowWatchDTO watch;
 }

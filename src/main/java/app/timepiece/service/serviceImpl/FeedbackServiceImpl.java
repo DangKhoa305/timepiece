@@ -2,9 +2,11 @@ package app.timepiece.service.serviceImpl;
 
 import app.timepiece.dto.CreateFeedbackDTO;
 import app.timepiece.dto.FeedbackDTO;
+import app.timepiece.dto.ShowWatchDTO;
 import app.timepiece.entity.Feedback;
 import app.timepiece.entity.Order;
 import app.timepiece.entity.User;
+import app.timepiece.entity.Watch;
 import app.timepiece.repository.FeedbackRepository;
 import app.timepiece.repository.OrderRepository;
 import app.timepiece.repository.UserRepository;
@@ -29,8 +31,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     private UserRepository userRepository;
 
     @Override
-    public List<Feedback> getAllFeedbacks() {
-        return feedbackRepository.findAll();
+    public List<FeedbackDTO> getAllFeedbacks() {
+        List<Feedback> feedbacks =  feedbackRepository.findAll();
+        return feedbacks.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -121,13 +124,38 @@ public class FeedbackServiceImpl implements FeedbackService {
 
             Feedback savedFeedback = feedbackRepository.save(feedback);
 
+        ShowWatchDTO showWatchDTO = null;
+        if (savedFeedback.getOrder() != null && savedFeedback.getOrder().getWatch() != null) {
+            Watch watch = savedFeedback.getOrder().getWatch();
+            showWatchDTO = ShowWatchDTO.builder()
+                    .id(watch.getId())
+                    .name(watch.getName())
+                    .price(watch.getPrice())
+                    .status(watch.getStatus())
+                    .imageUrl(watch.getImages() != null && !watch.getImages().isEmpty() ? watch.getImages().get(0).getImageUrl() : null)
+                    .userId(watch.getUser() != null ? watch.getUser().getId() : null)
+                    .userName(watch.getUser() != null ? watch.getUser().getName() : null)
+                    .userAvatar(watch.getUser() != null ? watch.getUser().getAvatar() : null)
+                    .userRatingScore(watch.getUser() != null ? watch.getUser().getRatingScore() : null)
+                    .area(watch.getArea())
+                    .address(watch.getAddress())
+                    .createDate(watch.getCreateDate())
+                    .hasAppraisalCertificate(watch.isHasAppraisalCertificate())
+                    .appraisalCertificateUrl(watch.getAppraisalCertificateUrl())
+                    .build();
+        }
+
             return FeedbackDTO.builder()
                     .id(savedFeedback.getId())
                     .comment(savedFeedback.getComment())
                     .timestamp(savedFeedback.getTimestamp())
                     .rating(savedFeedback.getRating())
+                    .userId(savedFeedback.getUser().getId())
+                    .userName(savedFeedback.getUser().getName())
+                    .avatar(savedFeedback.getUser().getAvatar())
                     .orderId(savedFeedback.getOrder().getId())
                     .parentFeedbackId(savedFeedback.getParentFeedback() != null ? savedFeedback.getParentFeedback().getId() : null)
+                    .watch(showWatchDTO)
                     .build();
 
     }
@@ -147,11 +175,42 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .comment(feedback.getComment())
                     .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
+                    .userId(feedback.getUser().getId())
                     .userName(feedback.getUser().getName())
+                    .avatar(feedback.getUser().getAvatar())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
                     .build();
             feedbackMap.put(feedback.getId(), feedbackDTO);
+        });
+
+        feedbackMap.values().forEach(feedbackDTO -> {
+            if (feedbackDTO.getOrderId() != null) {
+                Optional<Order> orderOptional = orderRepository.findById(feedbackDTO.getOrderId());
+                if (orderOptional.isPresent()) {
+                    Order order = orderOptional.get();
+                    if (order.getWatch() != null) {
+                        Watch watch = order.getWatch();
+                        ShowWatchDTO showWatchDTO = ShowWatchDTO.builder()
+                                .id(watch.getId())
+                                .name(watch.getName())
+                                .price(watch.getPrice())
+                                .status(watch.getStatus())
+                                .imageUrl(watch.getImages() != null && !watch.getImages().isEmpty() ? watch.getImages().get(0).getImageUrl() : null)
+                                .userId(watch.getUser() != null ? watch.getUser().getId() : null)
+                                .userName(watch.getUser() != null ? watch.getUser().getName() : null)
+                                .userAvatar(watch.getUser() != null ? watch.getUser().getAvatar() : null)
+                                .userRatingScore(watch.getUser() != null ? watch.getUser().getRatingScore() : null)
+                                .area(watch.getArea())
+                                .address(watch.getAddress())
+                                .createDate(watch.getCreateDate())
+                                .hasAppraisalCertificate(watch.isHasAppraisalCertificate())
+                                .appraisalCertificateUrl(watch.getAppraisalCertificateUrl())
+                                .build();
+                        feedbackDTO.setWatch(showWatchDTO);
+                    }
+                }
+            }
         });
 
         feedbackMap.values().forEach(feedbackDTO -> {
@@ -182,12 +241,42 @@ public class FeedbackServiceImpl implements FeedbackService {
                     .comment(feedback.getComment())
                     .rating(feedback.getRating())
                     .timestamp(feedback.getTimestamp())
+                    .userId(feedback.getUser().getId())
                     .userName(feedback.getUser().getName())
                     .avatar(feedback.getUser().getAvatar())
                     .orderId(feedback.getOrder().getId())
                     .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
                     .build();
             feedbackMap.put(feedback.getId(), feedbackDTO);
+        });
+
+        feedbackMap.values().forEach(feedbackDTO -> {
+            if (feedbackDTO.getOrderId() != null) {
+                Optional<Order> orderOptional = orderRepository.findById(feedbackDTO.getOrderId());
+                if (orderOptional.isPresent()) {
+                    Order order = orderOptional.get();
+                    if (order.getWatch() != null) {
+                        Watch watch = order.getWatch();
+                        ShowWatchDTO showWatchDTO = ShowWatchDTO.builder()
+                                .id(watch.getId())
+                                .name(watch.getName())
+                                .price(watch.getPrice())
+                                .status(watch.getStatus())
+                                .imageUrl(watch.getImages() != null && !watch.getImages().isEmpty() ? watch.getImages().get(0).getImageUrl() : null)
+                                .userId(watch.getUser() != null ? watch.getUser().getId() : null)
+                                .userName(watch.getUser() != null ? watch.getUser().getName() : null)
+                                .userAvatar(watch.getUser() != null ? watch.getUser().getAvatar() : null)
+                                .userRatingScore(watch.getUser() != null ? watch.getUser().getRatingScore() : null)
+                                .area(watch.getArea())
+                                .address(watch.getAddress())
+                                .createDate(watch.getCreateDate())
+                                .hasAppraisalCertificate(watch.isHasAppraisalCertificate())
+                                .appraisalCertificateUrl(watch.getAppraisalCertificateUrl())
+                                .build();
+                        feedbackDTO.setWatch(showWatchDTO);
+                    }
+                }
+            }
         });
 
         feedbackMap.values().forEach(feedbackDTO -> {
@@ -205,5 +294,51 @@ public class FeedbackServiceImpl implements FeedbackService {
         return feedbackMap.values().stream()
                 .filter(feedbackDTO -> feedbackDTO.getParentFeedbackId() == null)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FeedbackDTO> getFeedbacksBySellerId(Long sellerId) {
+        List<Feedback> feedbacks = feedbackRepository.findByParentFeedbackIsNullAndOrder_Watch_UserId(sellerId);
+        return feedbacks.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    private FeedbackDTO convertToDTO(Feedback feedback) {
+        FeedbackDTO dto = FeedbackDTO.builder()
+                .id(feedback.getId())
+                .comment(feedback.getComment())
+                .timestamp(feedback.getTimestamp())
+                .rating(feedback.getRating())
+                .orderId(feedback.getOrder().getId())
+                .parentFeedbackId(feedback.getParentFeedback() != null ? feedback.getParentFeedback().getId() : null)
+                .build();
+
+
+        if (feedback.getUser() != null) {
+            dto.setUserId(feedback.getUser().getId());
+            dto.setUserName(feedback.getUser().getName());
+            dto.setAvatar(feedback.getUser().getAvatar());
+        }
+
+
+        if (feedback.getOrder() != null && feedback.getOrder().getWatch() != null) {
+            Watch watch = feedback.getOrder().getWatch();
+            dto.setWatch(ShowWatchDTO.builder()
+                    .id(watch.getId())
+                    .name(watch.getName())
+                    .price(watch.getPrice())
+                    .status(watch.getStatus())
+                    .imageUrl(watch.getImages() != null && !watch.getImages().isEmpty() ? watch.getImages().get(0).getImageUrl() : null)
+                    .userId(watch.getUser() != null ? watch.getUser().getId() : null)
+                    .userName(watch.getUser() != null ? watch.getUser().getName() : null)
+                    .userAvatar(watch.getUser() != null ? watch.getUser().getAvatar() : null)
+                    .userRatingScore(watch.getUser() != null ? watch.getUser().getRatingScore() : null)
+                    .area(watch.getArea())
+                    .address(watch.getAddress())
+                    .createDate(watch.getCreateDate())
+                    .hasAppraisalCertificate(watch.isHasAppraisalCertificate())
+                    .appraisalCertificateUrl(watch.getAppraisalCertificateUrl())
+                    .build());
+        }
+        return dto;
     }
 }

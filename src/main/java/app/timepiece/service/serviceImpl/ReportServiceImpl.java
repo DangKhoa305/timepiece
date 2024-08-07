@@ -42,8 +42,6 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @Autowired
-    private AppraisalRequestRepository appraisalRequestRepository;
 
     @Autowired
     private PdfService pdfService;

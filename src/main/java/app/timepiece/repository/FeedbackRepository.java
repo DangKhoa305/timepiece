@@ -21,4 +21,5 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     Long countBySellerId(@Param("sellerId") Long sellerId);
 
    // List<Feedback> findByOrder_Watch_Seller_Id(Long sellerId);
+   List<Feedback> findByParentFeedbackIsNullAndOrder_Watch_UserId(Long sellerId);
 }

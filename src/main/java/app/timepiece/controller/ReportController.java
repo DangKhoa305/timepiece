@@ -30,22 +30,6 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-//    @PreAuthorize("hasRole('Appraiser')or hasRole('Admin')")
-//    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-//    public ResponseEntity<String> createReport(@Valid @ModelAttribute ReportDTO reportDTO, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            String errors = bindingResult.getFieldErrors().stream()
-//                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-//                    .collect(Collectors.joining("\n"));
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors:\n" + errors);
-//        }
-//        try {
-//            reportService.createReport(reportDTO);
-//            return ResponseEntity.status(HttpStatus.OK).body("Create Appraisal Report successfully ");
-//        } catch (Error e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//    }
 
     @PreAuthorize("hasRole('Appraiser') or hasRole('Admin')")
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})

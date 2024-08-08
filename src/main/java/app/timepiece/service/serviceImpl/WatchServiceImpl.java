@@ -51,7 +51,10 @@ public class WatchServiceImpl implements WatchService {
 
     @Override
     public List<WatchDTO> getAllWatches() {
-        return watchRepository.findAllExcludingStatus("CANCEL").stream().map(this::convertToWatchDTO).collect(Collectors.toList());
+        List<String> excludedStatuses = Arrays.asList("CANCEL", "SOLD");
+        return watchRepository.findAllExcludingStatuses(excludedStatuses).stream()
+                .map(this::convertToWatchDTO)
+                .collect(Collectors.toList());
     }
 
 
